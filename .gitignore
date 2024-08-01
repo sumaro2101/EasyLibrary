@@ -122,6 +122,9 @@ celerybeat.pid
 # SageMath parsed files
 *.sage.py
 
+*.debug.yml
+.dockerignore
+Dockerfile
 # Environments
 .env
 .venv

@@ -10,8 +10,9 @@ services:
       - media_volume:/home/app/mediafiles
     image: config
     command: /start
-    expose:
-      - 8000
+    ports:
+      - "8000:8000"
+      - "5678:5678"
     env_file:
       - .env
     depends_on:
@@ -33,7 +34,7 @@ services:
   celery_worker:
     build: 
       context: .
-      dockerfile: ./compose/django/Dockerfile
+      dockerfile: ./docker/django/Dockerfile
     image: config
     command: /start-celeryworker
     volumes:
@@ -43,12 +44,12 @@ services:
     depends_on:
       - redis
       - db
-      - resx
+      - library
 
   celery_beat:
     build: 
       context: .
-      dockerfile: ./compose/django/Dockerfile
+      dockerfile: ./docker/django/Dockerfile
     image: config
     command: /start-celerybeat
     volumes:
@@ -58,7 +59,7 @@ services:
     depends_on:
       - redis
       - db
-      - resx
+      - library
 
 volumes:
   postgres_data:

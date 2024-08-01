@@ -4,8 +4,6 @@ ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONPATH=/app
 
-COPY pyproject.toml .
-
 RUN adduser user \
     && addgroup docker \
     && adduser user docker
@@ -19,6 +17,7 @@ RUN apt-get update \
     && apt-get install -y gettext \
     && apt-get install -y git \
     && pip install -r /temp/requirements.txt \
+    && pip install debugpy -t /tmp \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     && rm -rf /var/lib/apt/lists/*
 
