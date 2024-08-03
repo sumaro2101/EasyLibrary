@@ -4,8 +4,12 @@ from rest_framework.exceptions import ErrorDetail
 
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import Permission
 
 from users.validators import ValidatorSetPasswordUser
+from users.models import Librarian
+from library.models import Book
 
 
 class TestUserApi(APITestCase):
@@ -27,7 +31,6 @@ class TestUserApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, {'id': user.pk,
                                          'username': 'test',
-                                         'tg_id': None,
                                          'first_name': '',
                                          'last_name': '',
                                          'email': 'test@gmail.com',

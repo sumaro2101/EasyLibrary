@@ -17,7 +17,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = get_user_model()
         fields = ('id',
                   'username',
-                  'tg_id',
                   'first_name',
                   'last_name',
                   'email',

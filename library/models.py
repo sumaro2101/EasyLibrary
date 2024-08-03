@@ -66,7 +66,9 @@ class Book(models.Model):
         help_text='Количество страниц данной книги',
         )
 
-    year_published = models.DateField()
+    year_published = models.PositiveIntegerField(verbose_name='дата издательства',
+                                                 help_text='Дата издательства книги',
+                                                 )
 
     genre = models.ManyToManyField("library.Genre",
                                    verbose_name='жанры',
@@ -135,7 +137,7 @@ class Publisher(models.Model):
                             help_text='Имя издателя',
                             )
 
-    adress = models.CharField(max_length=300,
+    address = models.CharField(max_length=300,
                               verbose_name='адресс издателя',
                               help_text='Адресс издателя',
                               )
