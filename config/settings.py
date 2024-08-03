@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'corsheaders',
     # custom_apps
     'users.apps.UsersConfig',
+    'library.apps.LibraryConfig',
 ]
 
 MIDDLEWARE = [

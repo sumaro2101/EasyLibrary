@@ -14,3 +14,4 @@ django-cors-headers==4.4.0
 flake8==7.1.0
 debugpy==1.5.1
 gunicorn==22.0.0
+pillow==10.3.0
