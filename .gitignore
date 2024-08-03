@@ -122,6 +122,9 @@ celerybeat.pid
 # SageMath parsed files
 *.sage.py
 
+*.debug.yml
+.dockerignore
+Dockerfile
 # Environments
 .env
 .venv
@@ -152,6 +155,7 @@ dmypy.json
 # pytype static type analyzer
 .pytype/
 
+static
 # Cython debug symbols
 cython_debug/
 
