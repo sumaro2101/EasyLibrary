@@ -12,3 +12,5 @@ python-crontab==3.2.0
 coverage==7.6.0
 django-cors-headers==4.4.0
 flake8==7.1.0
+debugpy==1.5.1
+gunicorn==22.0.0

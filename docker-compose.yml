@@ -1,6 +1,5 @@
 services:
   library:
-    restart: always
     build: 
       context: .
       dockerfile: ./docker/django/Dockerfile
@@ -12,7 +11,6 @@ services:
     command: /start
     ports:
       - "8000:8000"
-      - "5678:5678"
     env_file:
       - .env
     depends_on:
@@ -23,10 +21,8 @@ services:
     image: postgres:16.3-alpine3.20
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_DB=resx
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=password
+    env_file:
+      - .env
 
   redis:
     image: redis:7.2.5-alpine3.20
