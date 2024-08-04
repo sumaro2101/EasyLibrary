@@ -4,12 +4,8 @@ from rest_framework.exceptions import ErrorDetail
 
 from django.urls import reverse
 from django.contrib.auth import get_user_model
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.models import Permission
 
 from users.validators import ValidatorSetPasswordUser
-from users.models import Librarian
-from library.models import Book
 
 
 class TestUserApi(APITestCase):

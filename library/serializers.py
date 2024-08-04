@@ -9,7 +9,20 @@ class BookCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Book
-        fields = ('__all__',)
+        fields = ('id',
+                  'author',
+                  'publisher',
+                  'name',
+                  'image',
+                  'best_seller',
+                  'volume',
+                  'num_of_volume',
+                  'age_restriction',
+                  'count_pages',
+                  'year_published',
+                  'genre',
+                  'circulation',
+                  )
 
 
 class BookRetrieveSerializer(serializers.ModelSerializer):
@@ -39,7 +52,7 @@ class AuthorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Author
-        fields = ('__all__',)
+        fields = '__all__'
 
 
 class PublisherSerializer(serializers.ModelSerializer):
@@ -48,7 +61,7 @@ class PublisherSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Publisher
-        fields = ('__all__',)
+        fields = '__all__'
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -57,4 +70,4 @@ class GenreSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Genre
-        fields = ('__all__',)
+        fields = '__all__'

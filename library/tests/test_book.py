@@ -42,10 +42,10 @@ class TestBook(APITestCase):
     def test_create_book(self):
         """Тест создания книги
         """
-        url = reverse('book_create')
+        url = reverse('library:book_create')
         data = {
             'author': [self.author.pk,],
-            'published': self.publisher.pk,
+            'publisher': self.publisher.pk,
             'name': 'book',
             'best_seller': True,
             'volume': True,
@@ -60,9 +60,11 @@ class TestBook(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data, {
+            'id': response.data['id'],
             'author': [self.author.pk,],
-            'published': self.publisher.pk,
+            'publisher': self.publisher.pk,
             'name': 'book',
+            'image': None,
             'best_seller': True,
             'volume': True,
             'num_of_volume': 1,
@@ -78,8 +80,7 @@ class TestBook(APITestCase):
         """Тест обновления книги
         """
         book = Book.objects.create(
-            author=[self.author,],
-            published=self.publisher,
+            publisher=self.publisher,
             name='book',
             best_seller=True,
             volume=True,
@@ -87,10 +88,11 @@ class TestBook(APITestCase):
             age_restriction=16,
             count_pages=300,
             year_published=2015,
-            genre=[self.genre,],
             circulation=1203,
         )
-        url = reverse('book_update', kwargs={'pk': book.pk})
+        book.author.add(self.author)
+        book.genre.add(self.genre)
+        url = reverse('library:book_update', kwargs={'pk': book.pk})
         data = {
             'name': 'book_update',
         }
@@ -103,8 +105,7 @@ class TestBook(APITestCase):
         """Тест удаления издателя
         """
         book = Book.objects.create(
-            author=[self.author,],
-            published=self.publisher,
+            publisher=self.publisher,
             name='book',
             best_seller=True,
             volume=True,
@@ -112,10 +113,11 @@ class TestBook(APITestCase):
             age_restriction=16,
             count_pages=300,
             year_published=2015,
-            genre=[self.genre,],
             circulation=1203,
         )
-        url = reverse('book_delete', kwargs={'pk': book.pk})
+        book.author.add(self.author)
+        book.genre.add(self.genre)
+        url = reverse('library:book_delete', kwargs={'pk': book.pk})
         response = self.client.delete(url)
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

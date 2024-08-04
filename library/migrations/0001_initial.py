@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(help_text='Имя издателя', max_length=200, unique=True, verbose_name='имя издателя')),
-                ('adress', models.CharField(help_text='Адресс издателя', max_length=300, verbose_name='адресс издателя')),
+                ('address', models.CharField(help_text='Адресс издателя', max_length=300, verbose_name='адресс издателя')),
                 ('url', models.URLField(help_text='Сайт издателя', max_length=256, unique=True, verbose_name='сайт')),
                 ('email', models.EmailField(help_text='Эмеил издателя', max_length=254, unique=True, verbose_name='эмеил')),
                 ('phone', phonenumber_field.modelfields.PhoneNumberField(help_text='Контактный номер                             телефона издательства', max_length=128, region=None, unique=True, verbose_name='номер телефона')),

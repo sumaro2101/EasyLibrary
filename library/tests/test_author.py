@@ -23,7 +23,7 @@ class TestAuthor(APITestCase):
     def test_create_author(self):
         """Тест создания автора
         """
-        url = reverse('author_create')
+        url = reverse('library:author_create')
         data = {
             'first_name': 'author',
             'last_name': 'author_last',
@@ -32,6 +32,7 @@ class TestAuthor(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data, {
+            'id': response.data['id'],
             'first_name': 'author',
             'last_name': 'author_last',
             'surname': None,
@@ -46,7 +47,7 @@ class TestAuthor(APITestCase):
                                        last_name='author_last',
                                        surname='surname',
                                        )
-        url = reverse('author_update', kwargs={'pk': author.pk})
+        url = reverse('library:author_update', kwargs={'pk': author.pk})
         data = {
             'first_name': 'changed_name',
         }
@@ -62,7 +63,7 @@ class TestAuthor(APITestCase):
                                        last_name='author_last',
                                        surname='surname',
                                        )
-        url = reverse('author_delete', kwargs={'pk': author.pk})
+        url = reverse('library:author_delete', kwargs={'pk': author.pk})
         response = self.client.delete(url)
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

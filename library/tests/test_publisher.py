@@ -23,7 +23,7 @@ class TestPublisher(APITestCase):
     def test_create_publisher(self):
         """Тест создания издателя
         """
-        url = reverse('publisher_create')
+        url = reverse('library:publisher_create')
         data = {
             'name': 'publisher',
             'address': 'new-york',
@@ -35,6 +35,7 @@ class TestPublisher(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data, {
+            'id': response.data['id'],
             'name': 'publisher',
             'address': 'new-york',
             'url': 'https://www.publisher.com/',
@@ -53,7 +54,7 @@ class TestPublisher(APITestCase):
             email='publisher@gmail.com',
             phone='+79136001000',
         )
-        url = reverse('publisher_update', kwargs={'pk': publisher.pk})
+        url = reverse('library:publisher_update', kwargs={'pk': publisher.pk})
         data = {
             'name': 'publisher_update',
         }
@@ -72,7 +73,7 @@ class TestPublisher(APITestCase):
             email='publisher@gmail.com',
             phone='+79136001000',
         )
-        url = reverse('publisher_delete', kwargs={'pk': publisher.pk})
+        url = reverse('library:publisher_delete', kwargs={'pk': publisher.pk})
         response = self.client.delete(url)
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

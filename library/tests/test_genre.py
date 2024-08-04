@@ -23,7 +23,7 @@ class TestGenre(APITestCase):
     def test_create_genre(self):
         """Тест создания жанра
         """
-        url = reverse('genre_create')
+        url = reverse('library:genre_create')
         data = {
             'name_en': 'fantasy',
             'name_ru': 'Фэнтези',
@@ -32,6 +32,7 @@ class TestGenre(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data, {
+            'id': response.data['id'],
             'name_en': 'fantasy',
             'name_ru': 'Фэнтези',
         })
@@ -44,7 +45,7 @@ class TestGenre(APITestCase):
             name_en='fantasy',
             name_ru='Фэнтези',
         )
-        url = reverse('genre_update', kwargs={'pk': genre.pk})
+        url = reverse('library:genre_update', kwargs={'pk': genre.pk})
         data = {
             'name_ru': 'Фэнтези крутое',
         }
@@ -60,7 +61,7 @@ class TestGenre(APITestCase):
             name_en='fantasy',
             name_ru='Фэнтези',
         )
-        url = reverse('genre_delete', kwargs={'pk': genre.pk})
+        url = reverse('library:genre_delete', kwargs={'pk': genre.pk})
         response = self.client.delete(url)
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
