@@ -3,13 +3,14 @@ from rest_framework import generics
 from library.models import (Book,
                             Genre,
                             Author,
-                            Publisher,
+                            Publisher, Volume,
                             )
 from library.serializers import (BookCreateSerializer,
                                  BookRetrieveSerializer,
                                  GenreSerializer,
                                  AuthorSerializer,
                                  PublisherSerializer,
+                                 VolumeSerializer,
                                  )
 
 # Книга
@@ -114,6 +115,41 @@ class PublisherListAPIView(generics.ListAPIView):
     """
     serializer_class = PublisherSerializer
     queryset = Publisher.objects.get_queryset()
+
+
+# Том
+class VolumeCreateAPIView(generics.CreateAPIView):
+    """Енд поинт создания тома
+    """
+    serializer_class = VolumeSerializer
+    queryset = Volume.objects.get_queryset()
+
+
+class VolumeUpdateAPIView(generics.UpdateAPIView):
+    """Енд поинт обновления тома
+    """
+    serializer_class = VolumeSerializer
+    queryset = Volume.objects.get_queryset()
+
+
+class VolumeDeleteAPIView(generics.DestroyAPIView):
+    """Енд поинт удаления тома
+    """
+    queryset = Volume.objects.get_queryset()
+
+
+class VolumeRetrieveAPIView(generics.RetrieveAPIView):
+    """Енд поинт просмотра тома
+    """
+    serializer_class = VolumeSerializer
+    queryset = Volume.objects.get_queryset()
+
+
+class VolumeListAPIView(generics.ListAPIView):
+    """Енд поинт списка томов
+    """
+    serializer_class = VolumeSerializer
+    queryset = Volume.objects.get_queryset()
 
 
 # Жанр

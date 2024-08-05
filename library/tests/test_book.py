@@ -7,7 +7,7 @@ from rest_framework import status
 from library.models import (Book,
                             Publisher,
                             Genre,
-                            Author,
+                            Author, Volume,
                             )
 
 
@@ -33,6 +33,9 @@ class TestBook(APITestCase):
             email='publisher@gmail.com',
             phone='+79136001000',
         )
+        self.volume = Volume.objects.create(
+            name='fantasy_volume',
+        )
         self.genre = Genre.objects.create(
             name_en='fantasy',
             name_ru='Фэнтези',
@@ -48,13 +51,14 @@ class TestBook(APITestCase):
             'publisher': self.publisher.pk,
             'name': 'book',
             'best_seller': True,
-            'volume': True,
+            'volume': self.volume.pk,
             'num_of_volume': 1,
             'age_restriction': 16,
             'count_pages': 300,
             'year_published': 2015,
             'genre': [self.genre.pk,],
             'circulation': 1203,
+            'is_published': True,
         }
         response = self.client.post(url, data, format='json')
 
@@ -66,13 +70,14 @@ class TestBook(APITestCase):
             'name': 'book',
             'image': None,
             'best_seller': True,
-            'volume': True,
+            'volume': self.volume.pk,
             'num_of_volume': 1,
             'age_restriction': 16,
             'count_pages': 300,
             'year_published': 2015,
             'genre': [self.genre.pk,],
             'circulation': 1203,
+            'is_published': True,
         })
         self.assertEqual(Book.objects.count(), 1)
 
@@ -83,12 +88,13 @@ class TestBook(APITestCase):
             publisher=self.publisher,
             name='book',
             best_seller=True,
-            volume=True,
+            volume=self.volume,
             num_of_volume=1,
             age_restriction=16,
             count_pages=300,
             year_published=2015,
             circulation=1203,
+            is_published=True,
         )
         book.author.add(self.author)
         book.genre.add(self.genre)
@@ -101,6 +107,30 @@ class TestBook(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['name'], 'book_update')
 
+    def test_update_book_wrong_values(self):
+        """Тест обновления книги с не правильными значениями
+        """
+        book = Book.objects.create(
+            publisher=self.publisher,
+            name='book',
+            best_seller=True,
+            volume=self.volume,
+            num_of_volume=1,
+            age_restriction=16,
+            count_pages=300,
+            year_published=2015,
+            circulation=1203,
+            is_published=True
+        )
+        book.author.add(self.author)
+        book.genre.add(self.genre)
+        url = reverse('library:book_update', kwargs={'pk': book.pk})
+        data = {
+            'circulation': 0,
+        }
+        response = self.client.patch(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_delete_book(self):
         """Тест удаления издателя
         """
@@ -108,12 +138,13 @@ class TestBook(APITestCase):
             publisher=self.publisher,
             name='book',
             best_seller=True,
-            volume=True,
+            volume=self.volume,
             num_of_volume=1,
             age_restriction=16,
             count_pages=300,
             year_published=2015,
             circulation=1203,
+            is_published=True
         )
         book.author.add(self.author)
         book.genre.add(self.genre)

@@ -32,16 +32,19 @@ class Book(models.Model):
                               help_text='Изображение книги',
                               )
 
-    best_seller = models.BooleanField(default=False,
-                                      verbose_name='лидер продаж',
+    best_seller = models.BooleanField(verbose_name='лидер продаж',
                                       help_text='Является ли книга\
                                         лидером продаж',
                                         )
 
-    volume = models.BooleanField(default=False,
-                                 verbose_name='том',
-                                 help_text='Является ли книга частью тома',
-                                 )
+    volume = models.ForeignKey("library.Volume",
+                               verbose_name='том',
+                               help_text='Том книги',
+                               related_name='books',
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True,
+                               )
 
     num_of_volume = models.PositiveSmallIntegerField(null=True,
                                                      blank=True,
@@ -79,6 +82,10 @@ class Book(models.Model):
                                               help_text='Тираж данной книги',
                                               )
 
+    is_published = models.BooleanField(verbose_name='публикация',
+                                       help_text='Опублинована ли книга',
+                                       )
+
     class Meta:
         verbose_name = "Книга"
         verbose_name_plural = "Книги"
@@ -87,7 +94,7 @@ class Book(models.Model):
         return f'{self.name} {self.age_restriction}+'
 
     def get_absolute_url(self):
-        return reverse("book_detail", kwargs={"pk": self.pk})
+        return reverse("library:book_retrieve", kwargs={"pk": self.pk})
 
 
 class Author(models.Model):
@@ -125,7 +132,7 @@ class Author(models.Model):
         return f'{self.last_name} {self.first_name}'
 
     def get_absolute_url(self):
-        return reverse("author_detail", kwargs={"pk": self.pk})
+        return reverse("library:author_retrieve", kwargs={"pk": self.pk})
 
 
 class Publisher(models.Model):
@@ -168,7 +175,26 @@ class Publisher(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("publisher_detail", kwargs={"pk": self.pk})
+        return reverse("library:publisher_retrieve", kwargs={"pk": self.pk})
+
+
+class Volume(models.Model):
+    """Модель тома
+    """
+    name = models.CharField(max_length=150,
+                            help_text='Имя тома',
+                            verbose_name='имя тома',
+                            )
+
+    class Meta:
+        verbose_name = 'Том'
+        verbose_name_plural = 'Тома'
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse("library:volume_retrieve", kwargs={"pk": self.pk})
 
 
 class Genre(models.Model):
@@ -194,4 +220,4 @@ class Genre(models.Model):
         return self.name_ru
 
     def get_absolute_url(self):
-        return reverse("genre_detail", kwargs={"pk": self.pk})
+        return reverse("library:genre_retrieve", kwargs={"pk": self.pk})

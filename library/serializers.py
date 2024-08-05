@@ -1,6 +1,13 @@
 from rest_framework import serializers
+from rest_framework.fields import get_error_detail
+from rest_framework.validators import ValidationError
+
+from django.core.exceptions import ValidationError as DjangoValidationError
 
 from library import models
+from library.validators import (YearValidator,
+                                PublishedValidator,
+                                )
 
 
 class BookCreateSerializer(serializers.ModelSerializer):
@@ -22,7 +29,14 @@ class BookCreateSerializer(serializers.ModelSerializer):
                   'year_published',
                   'genre',
                   'circulation',
+                  'is_published',
                   )
+        validators = (YearValidator('year_published', 'is_published'),
+                      PublishedValidator('best_seller',
+                                         'circulation',
+                                         'is_published',
+                                         )
+                     )
 
 
 class BookRetrieveSerializer(serializers.ModelSerializer):
@@ -43,6 +57,7 @@ class BookRetrieveSerializer(serializers.ModelSerializer):
                   'year_published',
                   'genre',
                   'circulation',
+                  'is_published',
                   )
 
 
@@ -61,6 +76,15 @@ class PublisherSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Publisher
+        fields = '__all__'
+
+
+class VolumeSerializer(serializers.ModelSerializer):
+    """Серилизатор тома
+    """
+
+    class Meta:
+        model = models.Volume
         fields = '__all__'
 
 
