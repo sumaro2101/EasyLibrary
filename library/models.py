@@ -6,97 +6,6 @@ from phonenumber_field.modelfields import PhoneNumberField
 # Create your models here.
 
 
-class Book(models.Model):
-    """Модель книги
-    """
-    author = models.ManyToManyField("library.Author",
-                                    verbose_name='авторы',
-                                    help_text='Авторы данной книги',
-                                    )
-
-    publisher = models.ForeignKey("library.Publisher",
-                                  verbose_name='издатель',
-                                  help_text='Издательство данной книги',
-                                  on_delete=models.CASCADE,
-                                  )
-
-    name = models.CharField(max_length=300,
-                            verbose_name='название',
-                            help_text='Название книги',
-                            )
-
-    image = models.ImageField(upload_to=f'book/{name}/',
-                              null=True,
-                              blank=True,
-                              verbose_name='изображение',
-                              help_text='Изображение книги',
-                              )
-
-    best_seller = models.BooleanField(verbose_name='лидер продаж',
-                                      help_text='Является ли книга\
-                                        лидером продаж',
-                                        )
-
-    volume = models.ForeignKey("library.Volume",
-                               verbose_name='том',
-                               help_text='Том книги',
-                               related_name='books',
-                               on_delete=models.CASCADE,
-                               blank=True,
-                               null=True,
-                               )
-
-    num_of_volume = models.PositiveSmallIntegerField(null=True,
-                                                     blank=True,
-                                                     verbose_name='номер из тома',
-                                                     help_text='Какая по номеру книга в томе',
-                                                     )
-
-    age_restriction = models.PositiveSmallIntegerField(
-        choices=[
-            (0, '0+'),
-            (6, '6+'),
-            (12, '12+'),
-            (16, '16+'),
-            (18, '18+'),
-            ],
-        verbose_name='возрастные ограничения',
-        help_text='Возрастные ограничения для данной книги',
-        )
-
-    count_pages = models.PositiveIntegerField(
-        verbose_name='количество страниц',
-        help_text='Количество страниц данной книги',
-        )
-
-    year_published = models.PositiveIntegerField(verbose_name='дата издательства',
-                                                 help_text='Дата издательства книги',
-                                                 )
-
-    genre = models.ManyToManyField("library.Genre",
-                                   verbose_name='жанры',
-                                   help_text='Жанры данной книги',
-                                   )
-
-    circulation = models.PositiveIntegerField(verbose_name='тираж',
-                                              help_text='Тираж данной книги',
-                                              )
-
-    is_published = models.BooleanField(verbose_name='публикация',
-                                       help_text='Опублинована ли книга',
-                                       )
-
-    class Meta:
-        verbose_name = "Книга"
-        verbose_name_plural = "Книги"
-
-    def __str__(self):
-        return f'{self.name} {self.age_restriction}+'
-
-    def get_absolute_url(self):
-        return reverse("library:book_retrieve", kwargs={"pk": self.pk})
-
-
 class Author(models.Model):
     """Модель Автора книг
     """
@@ -221,3 +130,95 @@ class Genre(models.Model):
 
     def get_absolute_url(self):
         return reverse("library:genre_retrieve", kwargs={"pk": self.pk})
+
+
+class Book(models.Model):
+    """Модель книги
+    """
+    author = models.ManyToManyField(Author,
+                                    verbose_name='авторы',
+                                    help_text='Авторы данной книги',
+                                    )
+
+    publisher = models.ForeignKey(Publisher,
+                                  verbose_name='издатель',
+                                  help_text='Издательство данной книги',
+                                  on_delete=models.CASCADE,
+                                  )
+
+    name = models.CharField(max_length=300,
+                            verbose_name='название',
+                            help_text='Название книги',
+                            )
+
+    image = models.ImageField(upload_to=f'book/{name}/',
+                              null=True,
+                              blank=True,
+                              verbose_name='изображение',
+                              help_text='Изображение книги',
+                              )
+
+    best_seller = models.BooleanField(verbose_name='лидер продаж',
+                                      default=False,
+                                      help_text='Является ли книга\
+                                        лидером продаж',
+                                        )
+
+    volume = models.ForeignKey(Volume,
+                               verbose_name='том',
+                               help_text='Том книги',
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True,
+                               )
+
+    num_of_volume = models.PositiveSmallIntegerField(null=True,
+                                                     blank=True,
+                                                     verbose_name='номер из тома',
+                                                     help_text='Какая по номеру книга в томе',
+                                                     )
+
+    age_restriction = models.PositiveSmallIntegerField(
+        choices=[
+            (0, '0+'),
+            (6, '6+'),
+            (12, '12+'),
+            (16, '16+'),
+            (18, '18+'),
+            ],
+        verbose_name='возрастные ограничения',
+        help_text='Возрастные ограничения для данной книги',
+        )
+
+    count_pages = models.PositiveIntegerField(
+        verbose_name='количество страниц',
+        help_text='Количество страниц данной книги',
+        )
+
+    year_published = models.PositiveIntegerField(verbose_name='дата издательства',
+                                                 help_text='Дата издательства книги',
+                                                 )
+
+    genre = models.ManyToManyField(Genre,
+                                   verbose_name='жанры',
+                                   help_text='Жанры данной книги',
+                                   )
+
+    circulation = models.PositiveIntegerField(verbose_name='тираж',
+                                              help_text='Тираж данной книги',
+                                              )
+
+    is_published = models.BooleanField(verbose_name='публикация',
+                                       help_text='Опублинована ли книга',
+                                       default=True,
+                                       )
+
+    class Meta:
+        verbose_name = "Книга"
+        verbose_name_plural = "Книги"
+
+    def __str__(self):
+        return f'{self.name} {self.age_restriction}+'
+
+    def get_absolute_url(self):
+        return reverse("library:book_retrieve", kwargs={"pk": self.pk})

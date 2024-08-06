@@ -125,11 +125,32 @@ class TestBook(APITestCase):
         book.author.add(self.author)
         book.genre.add(self.genre)
         url = reverse('library:book_update', kwargs={'pk': book.pk})
-        data = {
+        data1 = {
             'circulation': 0,
         }
-        response = self.client.patch(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        data2 = {
+            'volume': None,
+        }
+        data3 = {
+            'is_published': False,
+        }
+        data4 = {
+            'year_published': 2030,
+        }
+        data5 = {
+            'num_of_volume': 0,
+        }
+        response1 = self.client.patch(url, data1, format='json')
+        response2 = self.client.patch(url, data2, format='json')
+        response3 = self.client.patch(url, data3, format='json')
+        response4 = self.client.patch(url, data4, format='json')
+        response5 = self.client.patch(url, data5, format='json')
+
+        self.assertEqual(response1.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response2.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response3.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response4.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response5.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_delete_book(self):
         """Тест удаления издателя

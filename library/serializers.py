@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from library import models
 from library.validators import (YearValidator,
                                 PublishedValidator,
+                                VolumeValidator,
                                 )
 
 
@@ -35,7 +36,10 @@ class BookCreateSerializer(serializers.ModelSerializer):
                       PublishedValidator('best_seller',
                                          'circulation',
                                          'is_published',
-                                         )
+                                         ),
+                      VolumeValidator('volume',
+                                      'num_of_volume',
+                                      ),
                      )
 
 

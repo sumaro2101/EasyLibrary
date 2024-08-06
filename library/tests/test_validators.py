@@ -18,9 +18,14 @@ class TestValidators(TestCase):
     """
     
     def setUp(self) -> None:
+        self.volume = Volume.objects.create(
+            name='fantasy_volume',
+        )
         class Serializer:
             class Instance:
-                best_seller =True
+                volume = self.volume
+                num_of_volume = 1
+                best_seller = True
                 circulation = 20
                 is_published = True
                 year_published = 2017
@@ -67,35 +72,37 @@ class TestValidators(TestCase):
         """Тест валидатора тома
         """
         value1 = {
-            'volume': True,
+            'volume': self.volume,
             'num_of_volume': 2,
         }
         value2 = {
-            'volume': False,
+            'volume': None,
             'num_of_volume': None,
         }
-        validator = VolumeValidator(['volume', 'num_of_volume'])
+        validator = VolumeValidator('volume', 'num_of_volume')
 
-        self.assertEqual(validator(value1), None)
-        self.assertEqual(validator(value2), None)
+        self.assertEqual(validator(value1, self.serializer), None)
+        self.assertEqual(validator(value2, self.serializer), None)
         
     def test_wrong_value_validator(self):
         """Тест валидатора на указания номера тома без значения тома
         """
         value1 = {
-            'volume': True,
+            'volume': self.volume,
             'num_of_volume': None,
         }
         value2 = {
-            'volume': False,
+            'volume': None,
             'num_of_volume': 2,
         }
-        validator = VolumeValidator(['volume', 'num_of_volume'])
+        validator = VolumeValidator('volume', 'num_of_volume')
+        serializer = self.serializer
+        serializer.instance = None
 
         with self.assertRaises(ValidationError):
-            validator(value1)
+            validator(value1, serializer)
         with self.assertRaises(ValidationError):
-            validator(value2)
+            validator(value2, serializer)
 
     def test_wrong_value_volume_validator(self):
         """Тест валидатора на не правильные значения тома
@@ -115,15 +122,12 @@ class TestValidators(TestCase):
             name_en='fantasy',
             name_ru='Фэнтези',
         )
-        volume = Volume.objects.create(
-            name='fantasy_volume',
-        )
         book = Book.objects.create(
             publisher=publisher,
             name='book',
             best_seller=True,
-            volume=volume,
-            num_of_volume=1,
+            volume=self.volume,
+            num_of_volume=2,
             age_restriction=16,
             count_pages=300,
             year_published=2015,
@@ -133,13 +137,13 @@ class TestValidators(TestCase):
         book.author.add(author)
         book.genre.add(genre)
         value = {
-            'volume': True,
-            'num_of_volume': 1,
+            'volume': self.volume,
+            'num_of_volume': 2,
         }
-        validator = VolumeValidator(['volume', 'num_of_volume'])
+        validator = VolumeValidator('volume', 'num_of_volume')
 
         with self.assertRaises(ValidationError):
-            validator(value)
+            validator(value, self.serializer)
 
     def test_published_validator(self):
         """Тест валидатора на значения при публикации
