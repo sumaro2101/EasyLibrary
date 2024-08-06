@@ -20,6 +20,25 @@ class TestAuthor(APITestCase):
         )
         self.client.force_authenticate(user)
 
+    def test_retrieve_author(self):
+        """Тест просмотра автора
+        """
+        author = Author.objects.create(first_name='author',
+                                       last_name='author_last',
+                                       surname='surname',
+                                       )
+        url = reverse('library:author_retrieve', kwargs={'pk': author.pk})
+        response = self.client.get(url, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, {
+            'id': response.data['id'],
+            'first_name': 'author',
+            'last_name': 'author_last',
+            'surname': None,
+            'portrait': None
+        })
+
     def test_create_author(self):
         """Тест создания автора
         """

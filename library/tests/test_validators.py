@@ -33,6 +33,12 @@ class TestValidators(TestCase):
                         
         self.serializer = Serializer
 
+    def test_year_validator_fields(self):
+        """Тест валидатора на входящие значения полей
+        """
+        with self.assertRaises(TypeError):
+            YearValidator([], [])
+
     def test_year_validator(self):
         """Тест валидатора года
         """
@@ -67,6 +73,12 @@ class TestValidators(TestCase):
 
         with self.assertRaises(ValidationError):
             validator(value2, self.serializer)
+      
+    def test_volume_validator_fields(self):
+        """Тест валидатора на входящие значения полей
+        """
+        with self.assertRaises(TypeError):
+            VolumeValidator([], [])
 
     def test_volume_validator(self):
         """Тест валидатора тома
@@ -144,6 +156,12 @@ class TestValidators(TestCase):
 
         with self.assertRaises(ValidationError):
             validator(value, self.serializer)
+
+    def test_published_validator_fields(self):
+        """Тест валидатора на входящие значения полей
+        """
+        with self.assertRaises(TypeError):
+            PublishedValidator([], [], [])
 
     def test_published_validator(self):
         """Тест валидатора на значения при публикации

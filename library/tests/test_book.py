@@ -42,6 +42,44 @@ class TestBook(APITestCase):
         )
         self.client.force_authenticate(user)
 
+    def test_retrieve_book(self):
+        """Тест просмотра книги
+        """
+        book = Book.objects.create(
+            publisher=self.publisher,
+            name='book',
+            best_seller=True,
+            volume=self.volume,
+            num_of_volume=1,
+            age_restriction=16,
+            count_pages=300,
+            year_published=2015,
+            circulation=1203,
+            is_published=True,
+        )
+        book.author.add(self.author)
+        book.genre.add(self.genre)
+        url = reverse('library:book_retrieve', kwargs={'pk': book.pk})
+
+        response = self.client.get(url, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, {
+            'author': [self.author.pk,],
+            'publisher': self.publisher.pk,
+            'name': 'book',
+            'image': None,
+            'best_seller': True,
+            'volume': self.volume.pk,
+            'num_of_volume': 1,
+            'age_restriction': 16,
+            'count_pages': 300,
+            'year_published': 2015,
+            'genre': [self.genre.pk,],
+            'circulation': 1203,
+            'is_published': True,
+        })
+
     def test_create_book(self):
         """Тест создания книги
         """
@@ -63,6 +101,7 @@ class TestBook(APITestCase):
         response = self.client.post(url, data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Book.objects.count(), 1)
         self.assertEqual(response.data, {
             'id': response.data['id'],
             'author': [self.author.pk,],
