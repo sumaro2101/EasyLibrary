@@ -7,6 +7,10 @@ from users.views import (UserProfileViewAPI,
                          UserCreateProfileAPI,
                          UserUpdateProfileAPI,
                          UserDeleteProfuleAPI,
+                         LibrarianProfileViewAPI,
+                         LibrarianCreateProfileAPI,
+                         LibrarianDeleteProfuleAPI,
+                         LibrarianUpdateProfileAPI
                          )
 
 app_name = UsersConfig.name
@@ -20,6 +24,7 @@ urlpatterns = [
           TokenRefreshView.as_view(),
           name='token_refresh',
           ),
+     # Пользователь
      path('api/user/create/',
           UserCreateProfileAPI.as_view(),
           name='user_create',
@@ -35,5 +40,21 @@ urlpatterns = [
      path('api/user/delete/<int:pk>/',
           UserDeleteProfuleAPI.as_view(),
           name='user_delete',
+          ),
+     # Библиотекарь
+     path('api/librarian/create/',
+          LibrarianCreateProfileAPI.as_view(),
+          name='librarian_create'),
+     path('api/librarian/<int:pk>/',
+          LibrarianProfileViewAPI.as_view(),
+          name='librarian_profile',
+          ),
+     path('api/librarian/update/<int:pk>/',
+          LibrarianUpdateProfileAPI.as_view(),
+          name='librarian_update',
+          ),
+     path('api/librarian/delete/<int:pk>/',
+          LibrarianDeleteProfuleAPI.as_view(),
+          name='librarian_delete',
           ),
 ]

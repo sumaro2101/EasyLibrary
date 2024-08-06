@@ -35,7 +35,7 @@ class TestAuthor(APITestCase):
             'id': response.data['id'],
             'first_name': 'author',
             'last_name': 'author_last',
-            'surname': None,
+            'surname': 'surname',
             'portrait': None
         })
 
