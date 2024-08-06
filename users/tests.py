@@ -27,7 +27,6 @@ class TestUserApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, {'id': user.pk,
                                          'username': 'test',
-                                         'tg_id': None,
                                          'first_name': '',
                                          'last_name': '',
                                          'email': 'test@gmail.com',

@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.db import models
 
 from phonenumber_field.modelfields import PhoneNumberField
 # Create your models here.
@@ -12,3 +13,8 @@ class User(AbstractUser):
             Пример: +7 (900) 910 1000',
                              unique=True,
                              )
+
+
+class Librarian(User):
+    """Модель библиотекаря
+    """
