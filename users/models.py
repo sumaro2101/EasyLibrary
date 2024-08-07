@@ -14,7 +14,8 @@ class User(AbstractUser):
                              unique=True,
                              )
 
-
-class Librarian(User):
-    """Модель библиотекаря
-    """
+    is_librarian = models.BooleanField(default=False,
+                                       editable=False,
+                                       verbose_name='библиотекарь',
+                                       help_text='Обозначение библитекаря',
+                                       )

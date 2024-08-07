@@ -6,7 +6,6 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 
 from users.validators import ValidatorSetPasswordUser
-from users.models import Librarian
 
 
 class TestUserApi(APITestCase):
@@ -14,7 +13,7 @@ class TestUserApi(APITestCase):
     """
 
     def test_view_user(self):
-        """Тест вывода пользователя
+        """Тест просмотра пользователя
         """
         user = get_user_model().objects.create(username='test',
                                                phone='+7 (900) 900 1000',
@@ -188,9 +187,9 @@ class TestLibrarianAPI(APITestCase):
             phone='+79006001000'
         )
         self.client.force_authenticate(user=self.admin)
-        
+
     def test_retrieve_librarian(self):
-        """Тест создания библиотекаря
+        """Тест просмотра библиотекаря
         """
         data = {'username': 'librarian',
                 'email': 'librarian@gmail.com',
@@ -206,9 +205,12 @@ class TestLibrarianAPI(APITestCase):
         response2 = self.client.get(url, format='json')
 
         self.assertEqual(response2.status_code, status.HTTP_200_OK)
-        self.assertTrue(Librarian.objects.get(
+        self.assertTrue(get_user_model().objects.get(
             pk=response1.data['id'],
             ).is_staff)
+        self.assertTrue(get_user_model().objects.get(
+            pk=response1.data['id'],
+            ).is_librarian)
 
     def test_create_librarian(self):
         """Тест создания библиотекаря
@@ -223,12 +225,12 @@ class TestLibrarianAPI(APITestCase):
         response = self.client.post(url, data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Librarian.objects.count(), 1)
+        self.assertEqual(get_user_model().objects.count(), 2)
 
     def test_update_librarian(self):
         """Тест обновления профиля библиотекаря
         """
-        librarian = Librarian.objects.create(
+        librarian = get_user_model().objects.create(
             username='librarian',
             email='librarian@gmail.com',
             phone='+7 (900) 900 1000',
@@ -248,10 +250,36 @@ class TestLibrarianAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['username'], 'updated')
 
+    def test_permission_update_librarian(self):
+        """Тест защиты от изменения библиотекаря
+        """
+        user = get_user_model().objects.create(username='test',
+                                               phone='+7 (900) 900 1000',
+                                               email='test@gmail.com',
+                                               password='testroot',
+                                               )
+        librarian = get_user_model().objects.create(
+            username='librarian',
+            email='librarian@gmail.com',
+            phone='+7 (900) 900 2000',
+            password='testpassword',
+        )
+        self.client.logout()
+        self.client.force_authenticate(user=user)
+
+        url = reverse('users:librarian_update', kwargs={
+            'pk': librarian.pk,
+            })
+        data = {
+            'username': 'updated'
+        }
+        response = self.client.patch(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
     def test_delete_librarian(self):
         """Тест удаления библиотекаря
         """
-        librarian = Librarian.objects.create(
+        librarian = get_user_model().objects.create(
             username='librarian',
             email='librarian@gmail.com',
             phone='+7 (900) 900 1000',
@@ -263,5 +291,5 @@ class TestLibrarianAPI(APITestCase):
 
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(Librarian.objects.count(), 1)
-        self.assertFalse(Librarian.objects.get(pk=librarian.pk).is_active)
+        self.assertEqual(get_user_model().objects.count(), 2)
+        self.assertFalse(get_user_model().objects.get(pk=librarian.pk).is_active)

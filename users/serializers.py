@@ -3,7 +3,6 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 
 from users.validators import ValidatorSetPasswordUser
-from users.models import Librarian
 from users.handlers import HandleCreateUser
 
 
@@ -57,64 +56,6 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = get_user_model()
-        fields = ('username',
-                  'first_name',
-                  'last_name',
-                  'email',
-                  'phone',
-                  )
-
-
-class LibrarianProfileSerializer(serializers.ModelSerializer):
-    """Сеарилизатор Профиля Библиотекаря
-    """
-
-    class Meta:
-        model = Librarian
-        fields = ('id',
-                  'username',
-                  'first_name',
-                  'last_name',
-                  'email',
-                  'phone',
-                  'last_login',
-                  'is_staff',
-                  'groups',
-                  )
-
-
-class LibrarianProfileCreateSerializer(serializers.ModelSerializer):
-    """Сериализатор создания Профиля
-    """
-    password_check = serializers.CharField(write_only=True, required=True,)
-
-    class Meta:
-        model = Librarian
-        fields = ('id',
-                  'username',
-                  'first_name',
-                  'last_name',
-                  'email',
-                  'phone',
-                  'password',
-                  'password_check',
-                  )
-        validators = [ValidatorSetPasswordUser(['password',
-                                                'password_check',
-                                                ])]
-
-    def create(self, validated_data):
-        instance = HandleCreateUser(self.Meta.model,
-                                    validated_data,
-                                    ).create()
-        return instance
-
-
-class LibrarianProfileUpdateSerializer(serializers.ModelSerializer):
-    """Редактирование профиля Библеотекаря
-    """
-    class Meta:
-        model = Librarian
         fields = ('username',
                   'first_name',
                   'last_name',

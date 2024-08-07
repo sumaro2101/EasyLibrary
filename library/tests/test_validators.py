@@ -161,7 +161,7 @@ class TestValidators(TestCase):
         """Тест валидатора на входящие значения полей
         """
         with self.assertRaises(TypeError):
-            PublishedValidator([], [], [])
+            PublishedValidator(([], [], []))
 
     def test_published_validator(self):
         """Тест валидатора на значения при публикации

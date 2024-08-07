@@ -7,10 +7,7 @@ from users.views import (UserProfileViewAPI,
                          UserCreateProfileAPI,
                          UserUpdateProfileAPI,
                          UserDeleteProfuleAPI,
-                         LibrarianProfileViewAPI,
                          LibrarianCreateProfileAPI,
-                         LibrarianDeleteProfuleAPI,
-                         LibrarianUpdateProfileAPI
                          )
 
 app_name = UsersConfig.name
@@ -46,15 +43,15 @@ urlpatterns = [
           LibrarianCreateProfileAPI.as_view(),
           name='librarian_create'),
      path('api/librarian/<int:pk>/',
-          LibrarianProfileViewAPI.as_view(),
+          UserProfileViewAPI.as_view(),
           name='librarian_profile',
           ),
      path('api/librarian/update/<int:pk>/',
-          LibrarianUpdateProfileAPI.as_view(),
+          UserUpdateProfileAPI.as_view(),
           name='librarian_update',
           ),
      path('api/librarian/delete/<int:pk>/',
-          LibrarianDeleteProfuleAPI.as_view(),
+          UserDeleteProfuleAPI.as_view(),
           name='librarian_delete',
           ),
 ]

@@ -11,4 +11,11 @@ class IsLibrarian(BasePermission):
     code = status.HTTP_403_FORBIDDEN
     
     def has_permission(self, request, view):
-        return request.user._meta.model_name == 'librarian'
+        return request.user.is_librarian
+
+
+class IsSuperUser(BasePermission):
+    """Проверка прав доступа администратора
+    """
+    def has_permission(self, request, view):
+        return request.user.is_superuser
