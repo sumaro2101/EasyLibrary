@@ -47,7 +47,8 @@ class UserUpdateProfileAPI(generics.UpdateAPIView):
     """
     queryset = get_user_model().objects.get_queryset()
     serializer_class = UserProfileUpdateSerializer
-    permission_classes = [IsCurrentUser | IsSuperUser]
+    permission_classes = [permissions.IsAuthenticated &
+                          (IsCurrentUser | IsSuperUser)]
 
 
 class UserDeleteProfuleAPI(generics.DestroyAPIView):
@@ -60,3 +61,15 @@ class UserDeleteProfuleAPI(generics.DestroyAPIView):
     def perform_destroy(self, instance: AbstractUser) -> None:
         instance.is_active = False
         instance.save(update_fields=('is_active',))
+
+
+class LibrarianCreateProfileAPI(generics.CreateAPIView):
+    """Создание библиотекаря,
+    может создать только администратор
+    """
+    queryset = get_user_model().objects.get_queryset()
+    serializer_class = UserProfileCreateSerializer
+    permission_classes = [permissions.IsAuthenticated & IsSuperUser]
+
+    def perform_create(self, serializer):
+        serializer.save(is_staff=True, is_librarian=True)

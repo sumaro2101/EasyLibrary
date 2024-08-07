@@ -153,8 +153,7 @@ class PublishedValidator:
     def __init__(self,
                  best_seller: str,
                  circulation: str,
-                 is_published: str,
-                 ) -> None:
+                 is_published: str) -> None:
         if not isinstance(best_seller, str):
             TypeError(f'{best_seller}, должен быть строкой')
         if not isinstance(circulation, str):
