@@ -12,6 +12,8 @@ COPY requirements.txt /temp/requirements.txt
 
 RUN apt-get update \
     && pip install --upgrade pip \
+    && apt-get install -y postgresql \
+    && apt-get install -y postgresql-client \
     && apt-get install -y build-essential \
     && apt-get install -y libpq-dev \
     && apt-get install -y gettext \

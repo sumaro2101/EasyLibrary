@@ -23,11 +23,15 @@ services:
     image: postgres:16.3-alpine3.20
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    hostname: db
     env_file:
       - .env
 
   redis:
     image: redis:7.2.5-alpine3.20
+    hostname: redis
+    depends_on:
+      - db
   
   celery_worker:
     build: 
@@ -35,6 +39,8 @@ services:
       dockerfile: ./docker/django/Dockerfile
     image: config
     command: /start-celeryworker
+    links:
+      - redis
     volumes:
       - .:/app
     env_file:
@@ -52,6 +58,8 @@ services:
       dockerfile: ./docker/django/Dockerfile
     image: config
     command: /start-celerybeat
+    links:
+      - redis
     volumes:
       - .:/app
     env_file:

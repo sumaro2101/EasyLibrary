@@ -47,7 +47,13 @@ class BookRetrieveAPIView(generics.RetrieveAPIView):
     """Енд поинт просмотра книги
     """
     serializer_class = BookRetrieveSerializer
-    queryset = Book.objects.get_queryset()
+    queryset = Book.objects.get_queryset().select_related(
+        'publisher',
+        'volume',
+        ).prefetch_related(
+            'author',
+            'genre',
+            )
     permission_classes = [permissions.AllowAny]
 
 
@@ -55,7 +61,13 @@ class BookListAPIView(generics.ListAPIView):
     """Енд поинт списка книг
     """
     serializer_class = BookRetrieveSerializer
-    queryset = Book.objects.get_queryset()
+    queryset = Book.objects.get_queryset().order_by('name').select_related(
+        'publisher',
+        'volume',
+        ).prefetch_related(
+            'author',
+            'genre',
+            )
     permission_classes = [permissions.AllowAny]
 
 
@@ -184,7 +196,7 @@ class VolumeListAPIView(generics.ListAPIView):
     """Енд поинт списка томов
     """
     serializer_class = VolumeSerializer
-    queryset = Volume.objects.get_queryset()
+    queryset = Volume.objects.get_queryset().order_by('name')
     permission_classes = [permissions.AllowAny]
 
 
