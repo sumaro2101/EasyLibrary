@@ -219,6 +219,21 @@ MEDIA_ROOT = BASE_DIR / "mediafiles"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+
+EMAIL_HOST = find_env('YANDEX_HOST')
+EMAIL_PORT = find_env('YANDEX_PORT')
+EMAIL_HOST_USER = find_env('YANDEX_HOST_USER')
+EMAIL_HOST_PASSWORD = find_env('YANDEX_PASSWORD_HOST')
+EMAIL_USE_SSL = True if find_env('YANDEX_CONNTECT_TYPE') == 'SSL' else False
+EMAIL_USE_TLS = True if find_env('YANDEX_CONNTECT_TYPE') == 'TLS' else False
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+SERVER_EMAIL = EMAIL_HOST_USER
+EMAIL_ADMIN = EMAIL_HOST_USER
+
 AUTH_USER_MODEL = 'users.User'
 
 AUTHENTICATION_BACKENDS = [
