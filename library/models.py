@@ -167,6 +167,7 @@ class Book(models.Model):
     volume = models.ForeignKey(Volume,
                                verbose_name='том',
                                help_text='Том книги',
+                               related_name='books',
                                on_delete=models.CASCADE,
                                blank=True,
                                null=True,
@@ -216,6 +217,7 @@ class Book(models.Model):
     class Meta:
         verbose_name = "Книга"
         verbose_name_plural = "Книги"
+        ordering = ['name']
 
     def __str__(self):
         return f'{self.name} {self.age_restriction}+'

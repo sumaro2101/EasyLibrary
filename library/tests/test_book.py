@@ -12,7 +12,7 @@ from library.models import (Book,
 
 
 class TestBook(APITestCase):
-    """Тесты модели жанра
+    """Тесты модели книги
     """
 
     def setUp(self) -> None:
@@ -67,17 +67,17 @@ class TestBook(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, {
-            'author': [self.author.pk,],
-            'publisher': self.publisher.pk,
+            'author': ['author_last author'],
+            'publisher': 'publisher',
             'name': 'book',
             'image': None,
             'best_seller': True,
-            'volume': self.volume.pk,
+            'volume': 'fantasy_volume',
             'num_of_volume': 1,
             'age_restriction': 16,
             'count_pages': 300,
             'year_published': 2015,
-            'genre': [self.genre.pk,],
+            'genre': ['Фэнтези'],
             'circulation': 1203,
             'is_published': True,
         })

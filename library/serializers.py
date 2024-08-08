@@ -1,14 +1,19 @@
 from rest_framework import serializers
-from rest_framework.fields import get_error_detail
-from rest_framework.validators import ValidationError
-
-from django.core.exceptions import ValidationError as DjangoValidationError
 
 from library import models
 from library.validators import (YearValidator,
                                 PublishedValidator,
                                 VolumeValidator,
                                 )
+
+
+class PublisherSerializer(serializers.ModelSerializer):
+    """Серилизатор издателя
+    """
+
+    class Meta:
+        model = models.Publisher
+        fields = '__all__'
 
 
 class BookCreateSerializer(serializers.ModelSerializer):
@@ -46,6 +51,10 @@ class BookCreateSerializer(serializers.ModelSerializer):
 class BookRetrieveSerializer(serializers.ModelSerializer):
     """Серилизатор вывода книг
     """
+    author = serializers.StringRelatedField(many=True)
+    publisher = serializers.StringRelatedField()
+    volume = serializers.StringRelatedField()
+    genre = serializers.StringRelatedField(many=True)
 
     class Meta:
         model = models.Book
@@ -68,28 +77,32 @@ class BookRetrieveSerializer(serializers.ModelSerializer):
 class AuthorSerializer(serializers.ModelSerializer):
     """Серилизатор автора
     """
+    books = serializers.StringRelatedField(many=True,
+                                           read_only=True,
+                                           source='book_set')
 
     class Meta:
         model = models.Author
-        fields = '__all__'
-
-
-class PublisherSerializer(serializers.ModelSerializer):
-    """Серилизатор издателя
-    """
-
-    class Meta:
-        model = models.Publisher
-        fields = '__all__'
+        fields = ('first_name',
+                  'last_name',
+                  'surname',
+                  'portrait',
+                  'books',
+                  )
 
 
 class VolumeSerializer(serializers.ModelSerializer):
     """Серилизатор тома
     """
-
+    books = BookRetrieveSerializer(many=True,
+                                   read_only=True,
+                                   )
     class Meta:
         model = models.Volume
-        fields = '__all__'
+        fields = ('pk',
+                  'name',
+                  'books',
+                  )
 
 
 class GenreSerializer(serializers.ModelSerializer):

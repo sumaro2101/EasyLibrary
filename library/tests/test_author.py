@@ -34,11 +34,11 @@ class TestAuthor(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, {
-            'id': response.data['id'],
             'first_name': 'author',
             'last_name': 'author_last',
             'surname': 'surname',
-            'portrait': None
+            'portrait': None,
+            'books': [],
         })
 
     def test_retrieve_author_allow_any_permission(self):
@@ -66,11 +66,11 @@ class TestAuthor(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data, {
-            'id': response.data['id'],
             'first_name': 'author',
             'last_name': 'author_last',
             'surname': None,
             'portrait': None,
+            'books': [],
         })
         self.assertEqual(Author.objects.count(), 1)
 
