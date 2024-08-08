@@ -34,8 +34,9 @@ class TestGenre(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, {
-            'id': response.data['id'],
+            'pk': response.data['pk'],
             'name': 'fantasy_volume',
+            'books': [],
         })
 
     def test_retrieve_volume_allow_any_permission(self):
@@ -62,8 +63,9 @@ class TestGenre(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data, {
-            'id': response.data['id'],
+            'pk': response.data['pk'],
             'name': 'fantasy_volume',
+            'books': [],
         })
         self.assertEqual(Volume.objects.count(), 1)
 

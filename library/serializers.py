@@ -78,7 +78,8 @@ class AuthorSerializer(serializers.ModelSerializer):
     """Серилизатор автора
     """
     books = serializers.StringRelatedField(many=True,
-                                            source='book_set')
+                                           read_only=True,
+                                           source='book_set')
 
     class Meta:
         model = models.Author
