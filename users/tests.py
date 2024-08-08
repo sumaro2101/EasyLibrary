@@ -180,13 +180,13 @@ class TestLibrarianAPI(APITestCase):
     """
 
     def setUp(self) -> None:
-        self.admin = get_user_model().objects.create_superuser(
+        admin = get_user_model().objects.create_superuser(
             'admin',
             'admin@gmail.com',
             'password',
             phone='+79006001000'
         )
-        self.client.force_authenticate(user=self.admin)
+        self.client.force_authenticate(user=admin)
 
     def test_retrieve_librarian(self):
         """Тест просмотра библиотекаря
