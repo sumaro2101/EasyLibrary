@@ -146,7 +146,11 @@ class TestOrder(APITestCase):
             tenant=self.user,
             time_return=date.today() + timedelta(days=30),
         )
-        url = reverse('library:extension_accept', kwargs={'pk': order.pk})
+        extension = RequestExtension.objects.create(
+            order=order
+        )
+        url = reverse('library:extension_accept',
+                      kwargs={'pk': extension.pk})
         self.client.logout()
         librarian = get_user_model().objects.create(
             username='librarian',
@@ -173,7 +177,11 @@ class TestOrder(APITestCase):
             tenant=self.user,
             time_return=date.today() + timedelta(days=30),
         )
-        url = reverse('library:extension_cancel', kwargs={'pk': order.pk})
+        extension = RequestExtension.objects.create(
+            order=order
+        )
+        url = reverse('library:extension_cancel',
+                      kwargs={'pk': extension.pk})
         self.client.logout()
         librarian = get_user_model().objects.create(
             username='librarian',
@@ -212,8 +220,8 @@ class TestOrder(APITestCase):
             is_staff=True,
         )
         self.client.force_authenticate(librarian)
-        response = self.client.patch(url, format='json')
+        response = self.client.delete(url, format='json')
         order = Order.objects.get(book=self.book)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(order.status, 'закончено')

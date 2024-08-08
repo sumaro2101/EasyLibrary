@@ -296,6 +296,8 @@ class RequestExtension(models.Model):
                                   'обработал запрос',
                                   on_delete=models.SET_DEFAULT,
                                   default=None,
+                                  null=True,
+                                  blank=True,
                                   )
 
     time_response = models.DateTimeField(auto_now=True,
@@ -305,9 +307,11 @@ class RequestExtension(models.Model):
 
     solution = models.CharField(choices=[('accept', 'принят'),
                                          ('cancel', 'отменен'),
+                                         ('wait', 'ожидание'),
                                          ],
                                 verbose_name='решение',
                                 help_text='Принятое решение библиотекарем',
+                                default='wait'
                                 )
 
     class Meta:
@@ -319,4 +323,4 @@ class RequestExtension(models.Model):
         return f'{self.time_request} - {self.solution}'
 
     def get_absolute_url(self):
-        return reverse("request_extension_retrieve", kwargs={"pk": self.pk})
+        return reverse("extension_retrieve", kwargs={"pk": self.pk})
