@@ -224,3 +224,99 @@ class Book(models.Model):
 
     def get_absolute_url(self):
         return reverse("library:book_retrieve", kwargs={"pk": self.pk})
+
+
+class Order(models.Model):
+    """Модель выдачи книг
+    """
+    book = models.ForeignKey(Book,
+                             verbose_name='книга',
+                             on_delete=models.CASCADE,
+                             help_text='Книга которую выдали',
+                             )
+
+    tenant = models.ForeignKey("users.User",
+                               verbose_name='пользователь',
+                               on_delete=models.CASCADE,
+                               help_text='На кого была выдана книга',
+                               )
+
+    count_extensions = models.SmallIntegerField(verbose_name='продления',
+                                                help_text='Количество '
+                                                'продлений которые '
+                                                'уже были сделаны',
+                                                default=0,
+                                                )
+
+    time_order = models.DateField(auto_now_add=True,
+                                  verbose_name='время выдачи',
+                                  help_text='Время когда книга была выдана',
+                                  )
+
+    time_return = models.DateField(verbose_name='время возврата',
+                                   help_text='Время когда нужно '
+                                   'вернуть книгу',
+                                   )
+    
+    status = models.CharField(choices=[('active', 'активно'),
+                                        ('end', 'закончено'),
+                                        ],
+                              default='active',
+                              )
+
+    class Meta:
+        verbose_name = 'выдача'
+        verbose_name_plural = 'выдачи'
+        ordering = ['time_order']
+
+    def __str__(self):
+        return f'{self.time_order} - {self.status}'
+
+    def get_absolute_url(self):
+        return reverse("order_retrieve", kwargs={"pk": self.pk})
+
+
+class RequestExtension(models.Model):
+    """Модель запроса на продление
+    """
+    order = models.ForeignKey(Order,
+                              verbose_name='выдача',
+                              on_delete=models.CASCADE,
+                              help_text='Объект выдачи книги',
+                              )
+
+    time_request = models.DateTimeField(auto_now_add=True,
+                                        verbose_name='время запроса',
+                                        help_text='Время запроса',
+                                        )
+
+    receiving = models.ForeignKey("users.User",
+                                  verbose_name='принимающий',
+                                  help_text='Библиотекарь который '
+                                  'обработал запрос',
+                                  on_delete=models.SET_DEFAULT,
+                                  default=None,
+                                  )
+
+    time_response = models.DateTimeField(auto_now=True,
+                                         verbose_name='время ответа',
+                                         help_text='Время ответа',
+                                         )
+
+    solution = models.CharField(choices=[('accept', 'принят'),
+                                         ('cancel', 'отменен'),
+                                         ],
+                                verbose_name='решение',
+                                help_text='Принятое решение библиотекарем',
+                                )
+
+    class Meta:
+        verbose_name = 'запрос'
+        verbose_name_plural = 'запросы'
+        ordering = ['time_request']
+
+    def __str__(self):
+        return f'{self.time_request} - {self.solution}'
+
+    def get_absolute_url(self):
+        return reverse("request_extension_retrieve", kwargs={"pk": self.pk})
