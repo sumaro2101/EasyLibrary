@@ -151,6 +151,12 @@ class Book(models.Model):
                             help_text='Название книги',
                             )
 
+    quantity = models.PositiveIntegerField(
+        verbose_name='количество',
+        help_text='Количество книг в библиотеке',
+        default=1,
+        )
+
     image = models.ImageField(upload_to=f'book/{name}/',
                               null=True,
                               blank=True,
@@ -262,6 +268,7 @@ class Order(models.Model):
                                         ('end', 'закончено'),
                                         ],
                               default='active',
+                              max_length=30,
                               )
 
     class Meta:
@@ -285,6 +292,16 @@ class RequestExtension(models.Model):
                               help_text='Объект выдачи книги',
                               )
 
+    applicant = models.ForeignKey("users.User",
+                                  verbose_name='заявщик',
+                                  on_delete=models.CASCADE,
+                                  related_name='extensions',
+                                  help_text='Заявщик который хочет продлить',
+                                  default=None,
+                                  blank=True,
+                                  null=True,
+                                  )
+
     time_request = models.DateTimeField(auto_now_add=True,
                                         verbose_name='время запроса',
                                         help_text='Время запроса',
@@ -305,13 +322,21 @@ class RequestExtension(models.Model):
                                          help_text='Время ответа',
                                          )
 
+    response_text = models.TextField(verbose_name='ответ',
+                                     help_text='Письменный ответ от '
+                                     'библиотекаря',
+                                     null=True,
+                                     blank=True,
+                                     )
+
     solution = models.CharField(choices=[('accept', 'принят'),
                                          ('cancel', 'отменен'),
                                          ('wait', 'ожидание'),
                                          ],
                                 verbose_name='решение',
                                 help_text='Принятое решение библиотекарем',
-                                default='wait'
+                                default='wait',
+                                max_length=30,
                                 )
 
     class Meta:

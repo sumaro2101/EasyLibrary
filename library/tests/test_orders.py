@@ -17,7 +17,7 @@ class TestOrder(APITestCase):
         self.user = get_user_model().objects.create(
             username='user',
             email='user@gmail.com',
-            phone='+7 (900) 900 2000',
+            phone='+7 (900) 900 2001',
             password='testpassword',
             is_librarian=True,
             is_staff=True,
@@ -71,11 +71,24 @@ class TestOrder(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, {
             'id': response.data['id'],
-            'tenant': self.user.pk,
+            'book': {'author': ['author_last author'],
+                     'publisher': 'publisher',
+                     'name': 'book',
+                     'image': None,
+                     'best_seller': True,
+                     'volume': 'fantasy_volume',
+                     'num_of_volume': 1,
+                     'age_restriction': 16,
+                     'count_pages': 300,
+                     'year_published': 2015,
+                     'genre': ['Фэнтези'],
+                     'circulation': 1203,
+                     'is_published': True},
             'count_extensions': 0,
             'time_order': response.data['time_order'],
-            'time_return': response.data['time_order'] + timedelta(days=30),
-            'status': 'активно',
+            'time_return': response.data['time_return'],
+            'status': 'active',
+            'tenant': self.user.pk,
         })
 
     def test_retrieve_order_permission(self):
@@ -106,37 +119,45 @@ class TestOrder(APITestCase):
     def test_open_order(self):
         """Тест открытия выдачи книги
         """
-        url = reverse('library:order_open')
-        data = {
-            'book': self.book.pk,
-            'tenant': self.user.pk,
-        }
+        url = reverse('library:order_open',
+                      kwargs={'pk': self.book.pk})
+        data = {}
         response = self.client.post(url, data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data, {
             'id': response.data['id'],
-            'tenant': self.user.pk,
             'count_extensions': 0,
             'time_order': response.data['time_order'],
-            'time_return': response.data['time_order'] + timedelta(days=30),
-            'status': 'активно',
+            'time_return': response.data['time_return'],
+            'status': 'active',
+            'book': self.book.pk,
+            'tenant': self.user.pk,
         })
         self.assertEqual(Order.objects.count(), 1)
+
+    def test_open_some_order(self):
+        """Тест выдачи одной и той же книги
+        """
+        url = reverse('library:order_open',
+                      kwargs={'pk': self.book.pk})
+        data = {}
+        self.client.post(url, data, format='json')
+        response = self.client.post(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_open_order_permission(self):
         """Тест прав доступа выдачи книги
         """
-        url = reverse('library:order_open')
-        data = {
-            'book': self.book.pk,
-            'tenant': self.user.pk,
-        }
+        url = reverse('library:order_open',
+                      kwargs={'pk': self.book.pk})
+        data = {}
 
         self.client.logout()
         response = self.client.post(url, data, format='json')
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_extens_accept_order(self):
         """Тест продления времени выдачи
@@ -144,7 +165,7 @@ class TestOrder(APITestCase):
         order = Order.objects.create(
             book=self.book,
             tenant=self.user,
-            time_return=date.today() + timedelta(days=30),
+            time_return=date.today() + timedelta(days=14),
         )
         extension = RequestExtension.objects.create(
             order=order
@@ -166,7 +187,7 @@ class TestOrder(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(order.time_return,
-                         order.time_order + timedelta(days=60))
+                         order.time_order + timedelta(days=28))
         self.assertEqual(order.count_extensions, 1)
 
     def test_extens_cancel_order(self):
@@ -224,4 +245,4 @@ class TestOrder(APITestCase):
         order = Order.objects.get(book=self.book)
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(order.status, 'закончено')
+        self.assertEqual(order.status, 'end')

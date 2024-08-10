@@ -21,7 +21,7 @@ class TestExtension(APITestCase):
     """
 
     def setUp(self) -> None:
-        user = get_user_model().objects.create(
+        self.user = get_user_model().objects.create(
             username='user',
             email='user@gmail.com',
             phone='+7 (900) 900 2000',
@@ -63,7 +63,7 @@ class TestExtension(APITestCase):
         book.genre.add(genre)
         self.order = Order.objects.create(
             book=book,
-            tenant=user,
+            tenant=self.user,
             time_return=date.today() + timedelta(days=30),
         )
         self.librarian = get_user_model().objects.create(
@@ -74,7 +74,7 @@ class TestExtension(APITestCase):
             is_librarian=True,
             is_staff=True,
         )
-        self.client.force_authenticate(user)
+        self.client.force_authenticate(self.user)
 
     def test_open_extension(self):
         """Тест открытия запроса на продление
@@ -83,21 +83,24 @@ class TestExtension(APITestCase):
                       kwargs={'pk': self.order.pk})
 
         response = self.client.post(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data, {
             'id': response.data['id'],
-            'order': self.order.pk,
             'time_request': response.data['time_request'],
-            'receiving': None,
-            'time_response': None,
+            'time_response': response.data['time_response'],
+            'response_text': None,
             'solution': 'wait',
+            'order': self.order.pk,
+            'applicant': self.user.pk,
+            'receiving': None,
         })
 
     def test_accept_extension(self):
         """Тест принятия продления
         """
         extension = RequestExtension.objects.create(
-            order=self.order
+            order=self.order,
+            applicant=self.user,
         )
         self.client.logout()
         self.client.force_authenticate(self.librarian)
@@ -109,18 +112,21 @@ class TestExtension(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, {
             'id': response.data['id'],
-            'order': self.order.pk,
             'time_request': response.data['time_request'],
-            'receiving': self.librarian.pk,
             'time_response': response.data['time_response'],
+            'response_text': None,
             'solution': 'accept',
+            'order': self.order.pk,
+            'applicant': self.user.pk,
+            'receiving': self.librarian.pk,
         })
 
-    def test_calcel_extension(self):
+    def test_cancel_extension(self):
         """Тест отмены продления
         """
         extension = RequestExtension.objects.create(
-            order=self.order
+            order=self.order,
+            applicant=self.user,
         )
         self.client.logout()
         self.client.force_authenticate(self.librarian)
@@ -132,9 +138,11 @@ class TestExtension(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, {
             'id': response.data['id'],
-            'order': self.order.pk,
             'time_request': response.data['time_request'],
-            'receiving': self.librarian.pk,
             'time_response': response.data['time_response'],
+            'response_text': None,
             'solution': 'cancel',
+            'order': self.order.pk,
+            'applicant': self.user.pk,
+            'receiving': self.librarian.pk,
         })
