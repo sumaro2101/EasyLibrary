@@ -151,6 +151,12 @@ class Book(models.Model):
                             help_text='Название книги',
                             )
 
+    quantity = models.PositiveIntegerField(
+        verbose_name='количество',
+        help_text='Количество книг в библиотеке',
+        default=1,
+        )
+
     image = models.ImageField(upload_to=f'book/{name}/',
                               null=True,
                               blank=True,
@@ -224,3 +230,122 @@ class Book(models.Model):
 
     def get_absolute_url(self):
         return reverse("library:book_retrieve", kwargs={"pk": self.pk})
+
+
+class Order(models.Model):
+    """Модель выдачи книг
+    """
+    book = models.ForeignKey(Book,
+                             verbose_name='книга',
+                             on_delete=models.CASCADE,
+                             help_text='Книга которую выдали',
+                             )
+
+    tenant = models.ForeignKey("users.User",
+                               verbose_name='пользователь',
+                               on_delete=models.CASCADE,
+                               help_text='На кого была выдана книга',
+                               )
+
+    count_extensions = models.SmallIntegerField(verbose_name='продления',
+                                                help_text='Количество '
+                                                'продлений которые '
+                                                'уже были сделаны',
+                                                default=0,
+                                                )
+
+    time_order = models.DateField(auto_now_add=True,
+                                  verbose_name='время выдачи',
+                                  help_text='Время когда книга была выдана',
+                                  )
+
+    time_return = models.DateField(verbose_name='время возврата',
+                                   help_text='Время когда нужно '
+                                   'вернуть книгу',
+                                   )
+    
+    status = models.CharField(choices=[('active', 'активно'),
+                                        ('end', 'закончено'),
+                                        ],
+                              default='active',
+                              max_length=30,
+                              )
+
+    class Meta:
+        verbose_name = 'выдача'
+        verbose_name_plural = 'выдачи'
+        ordering = ['time_order']
+
+    def __str__(self):
+        return f'{self.time_order} - {self.status}'
+
+    def get_absolute_url(self):
+        return reverse("order_retrieve", kwargs={"pk": self.pk})
+
+
+class RequestExtension(models.Model):
+    """Модель запроса на продление
+    """
+    order = models.ForeignKey(Order,
+                              verbose_name='выдача',
+                              on_delete=models.CASCADE,
+                              help_text='Объект выдачи книги',
+                              )
+
+    applicant = models.ForeignKey("users.User",
+                                  verbose_name='заявщик',
+                                  on_delete=models.CASCADE,
+                                  related_name='extensions',
+                                  help_text='Заявщик который хочет продлить',
+                                  default=None,
+                                  blank=True,
+                                  null=True,
+                                  )
+
+    time_request = models.DateTimeField(auto_now_add=True,
+                                        verbose_name='время запроса',
+                                        help_text='Время запроса',
+                                        )
+
+    receiving = models.ForeignKey("users.User",
+                                  verbose_name='принимающий',
+                                  help_text='Библиотекарь который '
+                                  'обработал запрос',
+                                  on_delete=models.SET_DEFAULT,
+                                  default=None,
+                                  null=True,
+                                  blank=True,
+                                  )
+
+    time_response = models.DateTimeField(auto_now=True,
+                                         verbose_name='время ответа',
+                                         help_text='Время ответа',
+                                         )
+
+    response_text = models.TextField(verbose_name='ответ',
+                                     help_text='Письменный ответ от '
+                                     'библиотекаря',
+                                     null=True,
+                                     blank=True,
+                                     )
+
+    solution = models.CharField(choices=[('accept', 'принят'),
+                                         ('cancel', 'отменен'),
+                                         ('wait', 'ожидание'),
+                                         ],
+                                verbose_name='решение',
+                                help_text='Принятое решение библиотекарем',
+                                default='wait',
+                                max_length=30,
+                                )
+
+    class Meta:
+        verbose_name = 'запрос'
+        verbose_name_plural = 'запросы'
+        ordering = ['time_request']
+
+    def __str__(self):
+        return f'{self.time_request} - {self.solution}'
+
+    def get_absolute_url(self):
+        return reverse("extension_retrieve", kwargs={"pk": self.pk})

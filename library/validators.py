@@ -2,12 +2,13 @@ from rest_framework.validators import ValidationError
 from rest_framework.serializers import ModelSerializer
 
 from django.db.models import Q
+from django.contrib.auth.models import AbstractUser
 
-from typing import Any, List, Union, Dict, Tuple
+from typing import Any, List, Union, Dict
 
 from datetime import date
 
-from library.models import Volume, Book
+from library.models import RequestExtension, Volume, Book, Order
 
 
 def get_value(field: str,
@@ -200,3 +201,204 @@ class PublishedValidator:
             circ = get_value(self.circulation, attrs, serializer)
             publish = get_value(self.is_published, attrs, serializer)
             self._check_status_depens_on_published(bs, circ, publish)
+
+
+class OrderRepeatValidator:
+    """Валидатор контроля повторения
+    выдачи одной и той же книги
+    """
+    requires_context = True
+    def __init__(self, field: str) -> None:
+        if not isinstance(field, str):
+            raise TypeError(f'{field}, должен быть строкой')
+        self.field = field
+
+    def _check_repeat_book_in_orders(self,
+                                     book: Book,
+                                     user: AbstractUser) -> None:
+        """Функция проверки повторения книги в выдачах
+        """
+        instance_in_orders = Order.objects.filter(Q(tenant=user) &
+                                                  Q(book=book) &
+                                                  ~Q(status='end'))
+        if instance_in_orders.exists():
+            raise ValidationError(
+                {'book': 'Эта книга уже была выдана'}
+            )
+
+    def __call__(self, attrs, serializer) -> Any:
+        book = serializer.initial_data['book']
+        user = serializer.initial_data['tenant']
+        self._check_repeat_book_in_orders(book, user)
+
+
+class BookQuantityValidator:
+    """Валидатор количества доступных книг
+    в библиотеке
+    """
+    requires_context = True
+    def __init__(self, field: str) -> None:
+        if not isinstance(field, str):
+            raise TypeError(f'{field}, должен быть строкой')
+        self.field = field
+
+    def _check_quantity_books_actual(self,
+                                     book: Book,
+                                     ) -> None:
+        """Функция проверки количества книг
+        """
+        quantity_book = book.quantity
+        quantity_orders = Order.objects.filter(Q(book=book) &
+                                               ~Q(status='end')).count()
+        if quantity_orders == quantity_book:
+            raise ValidationError(
+                {'book':
+                    'К сожалению этой книги в данный момент нет в наличии'
+                    }
+            )
+
+    def __call__(self, attrs, serializer) -> Any:
+        book = serializer.initial_data['book']
+        self._check_quantity_books_actual(book)
+
+
+class ExtensionValidator:
+    """Валидатор контроля повторения
+    запроса на продление
+    """
+    requires_context = True
+    def __init__(self, field: str) -> None:
+        if not isinstance(field, str):
+            raise TypeError(f'{field}, должен быть строкой')
+        self.field = field
+
+    def _check_repeat_book_in_orders(self,
+                                     order: Order,
+                                     user: AbstractUser,
+                                     ) -> None:
+        """Функция проверки повторения запроса на продление
+        """
+        instance_in_extension = RequestExtension.objects.filter(Q(applicant=user) &
+                                                                Q(order=order) &
+                                                                Q(solution='wait'))
+        if instance_in_extension.exists():
+            raise ValidationError(
+                {'order': 'Ваша заявка рассматривается, ожидайте'}
+            )
+
+    def __call__(self, attrs, serializer) -> Any:
+        order = serializer.initial_data['order']
+        user = serializer.initial_data['applicant']
+        self._check_repeat_book_in_orders(order, user)
+
+
+class SomeUserValidator:
+    """Валидатор просмотра что заявитель является
+    тем же пользователем которому выдали книгу
+    """
+    requires_context = True
+    def __init__(self, field: str) -> None:
+        if not isinstance(field, str):
+            raise TypeError(f'{field}, должен быть строкой')
+        self.field = field
+
+    def _check_repeat_book_in_orders(self,
+                                     order: Order,
+                                     user: AbstractUser,
+                                     ) -> None:
+        """Функция проверки повторения запроса на продление
+        """
+        some_user = order.tenant == user
+        if not some_user:
+            raise ValidationError(
+                {'order':
+                    'Вы не можете создавать заявления только на свои книги',
+                    }
+            )
+
+    def __call__(self, attrs, serializer) -> Any:
+        order = serializer.initial_data['order']
+        user = serializer.initial_data['applicant']
+        self._check_repeat_book_in_orders(order, user)
+
+
+class ResponseValidator:
+    """Валидатор который проверяет что данный запрос
+    еще не обработан
+    """
+    requires_context = True
+    def __init__(self, field: str) -> None:
+        if not isinstance(field, str):
+            raise TypeError(f'{field}, должен быть строкой')
+        self.field = field
+
+    def _check_solution(self,
+                        solution: str,
+                        ) -> None:
+        """Функция проверки повторения запроса на продление
+        """
+        if not solution == 'wait':
+            raise ValidationError(
+                {'error':
+                    'По данному запросу решение уже было вынесено',
+                    }
+            )
+
+    def __call__(self, attrs, serializer) -> Any:
+        solution = serializer.instance.solution
+        self._check_solution(solution)
+
+
+class CountExtensionsValidator:
+    """Валидатор который проверяет что количество
+    продлений не превышает норму
+    """
+    requires_context = True
+    def __init__(self, field: str) -> None:
+        if not isinstance(field, str):
+            raise TypeError(f'{field}, должен быть строкой')
+        self.field = field
+
+    def _check_count_extensions(self,
+                        count_extensions: int,
+                        ) -> None:
+        """Функция проверки повторения запроса на продление
+        """
+        if count_extensions >= 2:
+            raise ValidationError(
+                {'count_extensions':
+                    'Текущая книга уже была продленна максимальное '
+                    'количество раз',
+                    }
+            )
+
+    def __call__(self, attrs, serializer) -> Any:
+        order = serializer.initial_data['order']
+        count_extensions = order.count_extensions
+        self._check_count_extensions(count_extensions)
+
+
+class IsActiveOrderValidator:
+    """Валидатор который проверяет что выданная книга еще
+    не возвращена
+    """
+    requires_context = True
+    def __init__(self, field: str) -> None:
+        if not isinstance(field, str):
+            raise TypeError(f'{field}, должен быть строкой')
+        self.field = field
+
+    def _check_activity(self,
+                        status: str,
+                        ) -> None:
+        """Функция проверки статуса
+        """
+        if status == 'end':
+            raise ValidationError(
+                {'status': 'Данная книга уже была возвращена'}
+            )
+
+    def __call__(self, attrs, serializer) -> Any:
+        order = serializer.initial_data['order']
+        status = order.status
+        self._check_activity(status)

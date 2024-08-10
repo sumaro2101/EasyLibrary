@@ -126,28 +126,30 @@ SIMPLE_JWT = {
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-# try:
-#     DOCKER_DEBUG = bool(int(find_env('DOCKER_DEBUG')))
-# except TypeError:
-#     DOCKER_DEBUG = True
 
-# if DOCKER_DEBUG:
-#     DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME' : BASE_DIR / 'db.sqlite3'
-#         }
-#     }
-# else:
-DATABASES = {
-'default': {
-    'ENGINE': 'django.db.backends.postgresql',
-    'NAME': find_env('DB_NAME'),
-    'HOST': 'db',
-    'USER': find_env('DB_USER'),
-    'PASSWORD': find_env('DB_PASSWORD')
+
+try:
+    DOCKER_DEBUG = bool(int(find_env('DOCKER_DEBUG')))
+except TypeError:
+    DOCKER_DEBUG = True
+
+if DOCKER_DEBUG:
+    DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME' : BASE_DIR / 'db.sqlite3'
+        }
     }
-}
+else:
+    DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': find_env('DB_NAME'),
+        'HOST': 'db',
+        'USER': find_env('DB_USER'),
+        'PASSWORD': find_env('DB_PASSWORD')
+        }
+    }
 
 
 # CELERY
@@ -218,6 +220,21 @@ MEDIA_ROOT = BASE_DIR / "mediafiles"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+
+EMAIL_HOST = find_env('YANDEX_HOST')
+EMAIL_PORT = find_env('YANDEX_PORT')
+EMAIL_HOST_USER = find_env('YANDEX_HOST_USER')
+EMAIL_HOST_PASSWORD = find_env('YANDEX_PASSWORD_HOST')
+EMAIL_USE_SSL = True if find_env('YANDEX_CONNTECT_TYPE') == 'SSL' else False
+EMAIL_USE_TLS = True if find_env('YANDEX_CONNTECT_TYPE') == 'TLS' else False
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+SERVER_EMAIL = EMAIL_HOST_USER
+EMAIL_ADMIN = EMAIL_HOST_USER
 
 AUTH_USER_MODEL = 'users.User'
 

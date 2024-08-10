@@ -7,8 +7,8 @@ from rest_framework import status
 from library.models import Volume
 
 
-class TestGenre(APITestCase):
-    """Тесты модели жанра
+class TestVolume(APITestCase):
+    """Тесты модели тома
     """
 
     def setUp(self) -> None:

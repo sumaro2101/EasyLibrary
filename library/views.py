@@ -1,10 +1,20 @@
-from rest_framework import generics
+from datetime import date, timedelta
+
+from rest_framework import generics, status
 from rest_framework import permissions
+from rest_framework.response import Response
+
+from django.db.models import Q
+from django.core.exceptions import (MultipleObjectsReturned,
+                                    ObjectDoesNotExist,)
 
 from library.models import (Book,
                             Genre,
                             Author,
-                            Publisher, Volume,
+                            Publisher,
+                            Volume,
+                            Order,
+                            RequestExtension,
                             )
 from library.serializers import (BookCreateSerializer,
                                  BookRetrieveSerializer,
@@ -12,8 +22,16 @@ from library.serializers import (BookCreateSerializer,
                                  AuthorSerializer,
                                  PublisherSerializer,
                                  VolumeSerializer,
+                                 OrderOpenSerializer,
+                                 OrderViewSerializer,
+                                 OrderListViewSerializer,
+                                 ExtensionAcceptSerializer,
+                                 ExtensionCancelSerializer,
+                                 ExtensionOpenSerializer,
+                                 ExtensionRetrieveSerializer,
+                                 ExtensionListSerializer,
                                  )
-from library.permissions import IsLibrarian, IsSuperUser
+from library.permissions import IsLibrarian, IsSuperUser, IsCurrentUser
 
 
 # Книга
@@ -24,7 +42,7 @@ class BookCreateAPIView(generics.CreateAPIView):
     queryset = Book.objects.get_queryset()
     permission_classes = [permissions.IsAuthenticated & 
                           IsSuperUser | IsLibrarian]
-    
+
 
 class BookUpdateAPIView(generics.UpdateAPIView):
     """Енд поинт обновления книги
@@ -241,3 +259,144 @@ class GenreListAPIView(generics.ListAPIView):
     serializer_class = GenreSerializer
     queryset = Genre.objects.get_queryset()
     permission_classes = [permissions.AllowAny]
+
+
+# Выдача книг
+class OrderOpenAPIView(generics.CreateAPIView):
+    """Открытие выдачи книги
+    """
+    queryset = Order.objects.get_queryset()
+    serializer_class = OrderOpenSerializer
+    
+    def create(self, request, *args, **kwargs):
+        try:
+            self.book = Book.objects.get(pk=self.kwargs['pk'])
+        except (ObjectDoesNotExist, MultipleObjectsReturned):
+            return Response({'book': 'Данная книга не была найдена'},
+                            status=status.HTTP_404_NOT_FOUND)
+        age_restriction = self.book.age_restriction
+        if age_restriction != 18:
+            self.time_to_return_book = date.today() + timedelta(days=14)
+        else:
+            self.time_to_return_book = date.today() + timedelta(days=30)
+        request.data['book'] = self.book
+        request.data['tenant'] = self.request.user
+        return super().create(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        serializer.save(book=self.book,
+                        tenant=self.request.user,
+                        time_return=self.time_to_return_book,
+                        )
+
+
+class OrderCloseAPIView(generics.DestroyAPIView):
+    """Возврат выданной книги
+    """
+    queryset = Order.objects.get_queryset()
+    permission_classes = [permissions.IsAuthenticated &
+                          (IsLibrarian | IsSuperUser)]
+
+    def perform_destroy(self, instance):
+        instance.time_return = date.today()
+        instance.status = 'end'
+        instance.save(update_fields=('time_return', 'status'))
+        # Отправка Емеил об возврате книги
+        # Логика из менеджера задач
+
+
+class OrderRerieveAPIView(generics.RetrieveAPIView):
+    """Просмотр статуса выданной книги
+    """
+    queryset = Order.objects.get_queryset().prefetch_related('book')
+    serializer_class = OrderViewSerializer
+    permission_classes = [permissions.IsAuthenticated &
+                          (IsCurrentUser | IsLibrarian | IsSuperUser)]
+
+
+class OrderListAPIView(generics.ListAPIView):
+    """Просмотр списка выданных книг
+    """
+    queryset = Order.objects.get_queryset().prefetch_related('book')
+    serializer_class = OrderListViewSerializer
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        user = self.request.user
+        if not user.is_librarian and not user.is_superuser:
+            queryset = queryset.filter(Q(tenant=self.request.user) &
+                                       ~Q(status='end'))
+        else:
+            pass
+        return queryset
+
+
+class ExtensionOpenAPIView(generics.CreateAPIView):
+    """Открытие запроса на продление
+    """
+    queryset = RequestExtension.objects.get_queryset()
+    serializer_class = ExtensionOpenSerializer
+
+    def create(self, request, *args, **kwargs):
+        try:
+            self.order = Order.objects.get(pk=self.kwargs['pk'])
+        except (ObjectDoesNotExist, MultipleObjectsReturned):
+            return Response({'order': 'Выданной книги '
+                             'не было найдено'
+                             },
+                            status=status.HTTP_404_NOT_FOUND)
+        self.applicant = self.request.user
+        request.data['order'] = self.order
+        request.data['applicant'] = self.applicant
+        return super().create(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        serializer.save(order=self.order,
+                        applicant=self.applicant,
+                        )
+        # Отправка письма о созданном запросе
+
+
+class ExtensionAcceptAPIView(generics.UpdateAPIView):
+    """Принятие запроса на продление
+    """
+    queryset = RequestExtension.objects.get_queryset()
+    serializer_class = ExtensionAcceptSerializer
+    permission_classes = [permissions.IsAuthenticated &
+                          (IsLibrarian | IsSuperUser)]
+
+
+class ExtensionCancelAPIView(generics.UpdateAPIView):
+    """Отказ запроса на продление
+    """
+    queryset = RequestExtension.objects.get_queryset()
+    serializer_class = ExtensionCancelSerializer
+    permission_classes = [permissions.IsAuthenticated &
+                          (IsLibrarian | IsSuperUser)]
+
+
+class ExtensionRetrieveAPIView(generics.RetrieveAPIView):
+    """Просмотр запроса на продление
+    """
+    queryset = RequestExtension.objects.get_queryset().prefetch_related(
+        'order__book',
+    )
+    serializer_class = ExtensionRetrieveSerializer
+    permission_classes = [permissions.IsAuthenticated &
+                          (IsCurrentUser | IsLibrarian | IsSuperUser)]
+
+
+class ExtensionListAPIView(generics.ListAPIView):
+    queryset = RequestExtension.objects.get_queryset().prefetch_related(
+        'order__book',
+    )
+    serializer_class = ExtensionListSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        user = self.request.user
+        if not user.is_librarian and not user.is_superuser:
+            queryset = queryset.filter(Q(applicant=self.request.user))
+        else:
+            pass
+        return queryset

@@ -1,9 +1,20 @@
+from datetime import timedelta, date
+
 from rest_framework import serializers
+
+from django.db import transaction
 
 from library import models
 from library.validators import (YearValidator,
                                 PublishedValidator,
                                 VolumeValidator,
+                                OrderRepeatValidator,
+                                BookQuantityValidator,
+                                ExtensionValidator,
+                                SomeUserValidator,
+                                ResponseValidator,
+                                CountExtensionsValidator,
+                                IsActiveOrderValidator,
                                 )
 
 
@@ -112,3 +123,173 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Genre
         fields = '__all__'
+
+
+class OrderOpenSerializer(serializers.ModelSerializer):
+    """Сериализатор открытия выдачи книги
+    """
+
+    class Meta:
+        model = models.Order
+        fields = '__all__'
+        read_only_fields = ('book',
+                            'tenant',
+                            'count_extensions',
+                            'time_order',
+                            'time_return',
+                            'status',
+                            )
+        validators = (OrderRepeatValidator('book'),
+                      BookQuantityValidator('book'),
+                      )
+    
+    def create(self, validated_data):
+        instance = super().create(validated_data)
+        # Отправка Эмеила о выдаче книги
+        # Логика из менеджера задач
+        return instance
+
+
+class OrderViewSerializer(serializers.ModelSerializer):
+    """Сериализатор выданной книги
+    """
+    book = BookRetrieveSerializer(read_only=True)
+
+    class Meta:
+        model = models.Order
+        fields = '__all__'
+
+
+class OrderListViewSerializer(serializers.ModelSerializer):
+    """Сериализатор списка выданных книг
+    """
+    book = serializers.StringRelatedField()
+
+    class Meta:
+        model = models.Order
+        fields = ('book',
+                  'time_order',
+                  'time_return',
+                  )
+
+
+class ExtensionOpenSerializer(serializers.ModelSerializer):
+    """Сериализатор открытия запроса на продление
+    """
+
+    class Meta:
+        model = models.RequestExtension
+        fields = '__all__'
+        read_only_fields = ('order',
+                            'applicant',
+                            'time_request',
+                            'receiving',
+                            'time_response',
+                            'solution',
+                            )
+        validators = (SomeUserValidator('order'),
+                      IsActiveOrderValidator('order'),
+                      ExtensionValidator('order'),
+                      CountExtensionsValidator('order'),
+                      )
+
+
+class ExtensionAcceptSerializer(serializers.ModelSerializer):
+    """Сеарилизатор разрешения на продление
+    """
+
+    class Meta:
+        model = models.RequestExtension
+        fields = '__all__'
+        read_only_fields = ('order',
+                            'applicant',
+                            'time_request',
+                            'receiving',
+                            'time_response',
+                            'solution',
+                            )
+        validators = (ResponseValidator('solution'),)
+
+    def update(self, instance, validated_data):
+        with transaction.atomic():
+            instance.receiving = self.context['request'].user
+            instance.solution = 'accept'
+            order = instance.order
+            order.count_extensions += 1
+            if order.book.age_restriction == 18:
+                order.time_return = date.today() + timedelta(days=30)
+            else:
+                order.time_return = date.today() + timedelta(days=14)
+            order.save(update_fields=('count_extensions',
+                                      'time_return',
+                                      ))
+            extension = super().update(instance, validated_data)
+
+        # Отправка письма
+        return extension
+
+
+class ExtensionCancelSerializer(serializers.ModelSerializer):
+    """Сеарилизатор отмены на продление
+    """
+
+    class Meta:
+        model = models.RequestExtension
+        fields = '__all__'
+        read_only_fields = ('order',
+                            'applicant',
+                            'time_request',
+                            'receiving',
+                            'time_response',
+                            'solution',
+                            )
+        validators = (ResponseValidator('solution'),)
+
+    def update(self, instance, validated_data):
+        instance.receiving = self.context['request'].user
+        instance.solution = 'cancel'
+        extension = super().update(instance, validated_data)
+        # Отправка письма
+        return extension
+
+
+class ExtensionRetrieveSerializer(serializers.ModelSerializer):
+    """Сериализатор просмотра запроса
+    """
+    order = OrderViewSerializer(read_only=True)
+
+    class Meta:
+        model = models.RequestExtension
+        fields = '__all__'
+
+
+class OrderField(serializers.ModelSerializer):
+    """Поле для вывода заказа
+    """
+    book = serializers.StringRelatedField()
+
+    class Meta:
+        model = models.Order
+        exclude = ('tenant',)
+
+
+class LibrarianField(serializers.RelatedField):
+    """Поле библеотекаря
+    """
+    def to_representation(self, value):
+        if value:
+            last_name = value.last_name if value.last_name else value.username
+            first_name = value.first_name if value.first_name else ''
+            return f'{last_name} {first_name} {value.email}'
+        return None
+
+
+class ExtensionListSerializer(serializers.ModelSerializer):
+    """Сериализатор просмотра списка запросов
+    """
+    order = OrderField(read_only=True)
+    receiving = LibrarianField(read_only=True)
+
+    class Meta:
+        model = models.RequestExtension
+        exclude = ('applicant',)
