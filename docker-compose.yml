@@ -20,7 +20,7 @@ services:
       - db
   
   db:
-    image: postgres:16.3-alpine3.20
+    image: postgres:16.3-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     hostname: db
@@ -28,10 +28,9 @@ services:
       - .env
 
   redis:
-    image: redis:7.2.5-alpine3.20
-    hostname: redis
-    depends_on:
-      - db
+    image: redis:7.2.5-alpine
+    expose:
+      - 6379
   
   celery_worker:
     build: 
@@ -39,8 +38,6 @@ services:
       dockerfile: ./docker/django/Dockerfile
     image: config
     command: /start-celeryworker
-    links:
-      - redis
     volumes:
       - .:/app
     env_file:
@@ -50,7 +47,6 @@ services:
     depends_on:
       - redis
       - db
-      - library
 
   celery_beat:
     build: 
@@ -58,8 +54,6 @@ services:
       dockerfile: ./docker/django/Dockerfile
     image: config
     command: /start-celerybeat
-    links:
-      - redis
     volumes:
       - .:/app
     env_file:
@@ -69,7 +63,24 @@ services:
     depends_on:
       - redis
       - db
-      - library
+  
+  flower:
+    build:
+      context: .
+      dockerfile: ./docker/django/Dockerfile
+    image: config
+    command: /start-flower
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    ports:
+      - 5557:5555
+    environment:
+      - DOCKER_DEBUG=0
+    depends_on:
+      - redis
+      - db
 
 volumes:
   postgres_data:

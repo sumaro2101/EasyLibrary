@@ -1,4 +1,4 @@
-FROM python:3.11.9-slim
+FROM python:3.11-slim-buster
 
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -38,6 +38,10 @@ RUN chmod +x /start-celeryworker
 COPY ./docker/django/celery/beat/start /start-celerybeat
 RUN sed -i 's/\r$//g' /start-celerybeat
 RUN chmod +x /start-celerybeat
+
+COPY ./docker/django/celery/flower/start /start-flower
+RUN sed -i 's/\r$//g' /start-flower
+RUN chmod +x /start-flower
 
 RUN mkdir static
 
