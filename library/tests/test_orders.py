@@ -186,8 +186,9 @@ class TestOrder(APITestCase):
         order = Order.objects.get(book=self.book)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Продление происходит с текущей даты
         self.assertEqual(order.time_return,
-                         order.time_order + timedelta(days=28))
+                         order.time_order + timedelta(days=14))
         self.assertEqual(order.count_extensions, 1)
 
     def test_extens_cancel_order(self):

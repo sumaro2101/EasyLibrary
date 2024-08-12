@@ -11,9 +11,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from datetime import timedelta
-from pathlib import Path
-
 import os
+from pathlib import Path
 
 from .utils import find_env
 
@@ -26,10 +25,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-i38dvg2h9#vqsl9*yb#2_m%a-al+ls_jk20o9#n)3hog69(rz1'
-
-TELEGRAM_API_KEY = find_env('TELEGRAM_API_KEY')
-
-TELEGRAM_BOT_URL = find_env('TELEGRAM_BOT_URL')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -99,6 +94,14 @@ TEMPLATES = [
     },
 ]
 
+TEMPLATES_TO_TASK = {
+    'ORDER_OPEN': 'library/template_order.html',
+    'ORDER_CLOSE': 'library/template_order_close.html',
+    'EXTENSION_OPEN': 'library/template_extension_open.html',
+    'EXTENSION_ACCEPT': 'library/template_accept.html',
+    'EXTENSION_CANCEL': 'library/template_cancel.html'
+}
+
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
@@ -146,6 +149,7 @@ else:
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': find_env('DB_NAME'),
         'HOST': 'db',
+        'PORT': find_env('DB_PORT'),
         'USER': find_env('DB_USER'),
         'PASSWORD': find_env('DB_PASSWORD')
         }
@@ -154,14 +158,17 @@ else:
 
 # CELERY
 
-EXPIRE_SECONDS_TASK = 24*(60**3)
-
-CELERY_BROKER_URL = find_env('CELERY_BROKER')
-CELERY_RESULT_BACKEND = find_env('CELERY_BACKEND')
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://127.0.0.1:6379/0")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_BACKEND", "redis://127.0.0.1:6379/0")
 CELERY_RESULT_EXTENDED = True
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_BEAT_SCHEDULER = find_env('DEFAULT_DATABASE_BEAT')
 
+STANDART_HOUR_TO_TASK = 8
+STANDART_MINUTE_TO_TASK = 0
+
+TEMPLATE_PERIODICK_TASK_PATH = 'library/template_overdue.html'
+MAIL_SUBJECT_TASK_PATH = 'library/mail_send_subject.txt'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -221,8 +228,10 @@ MEDIA_ROOT = BASE_DIR / "mediafiles"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 
 EMAIL_HOST = find_env('YANDEX_HOST')

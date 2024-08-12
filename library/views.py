@@ -6,7 +6,9 @@ from rest_framework.response import Response
 
 from django.db.models import Q
 from django.core.exceptions import (MultipleObjectsReturned,
-                                    ObjectDoesNotExist,)
+                                    ObjectDoesNotExist,
+                                    )
+from django.conf import settings
 
 from library.models import (Book,
                             Genre,
@@ -32,6 +34,7 @@ from library.serializers import (BookCreateSerializer,
                                  ExtensionListSerializer,
                                  )
 from library.permissions import IsLibrarian, IsSuperUser, IsCurrentUser
+from library.task_manager import TaskManager
 
 
 # Книга
@@ -301,8 +304,11 @@ class OrderCloseAPIView(generics.DestroyAPIView):
         instance.time_return = date.today()
         instance.status = 'end'
         instance.save(update_fields=('time_return', 'status'))
-        # Отправка Емеил об возврате книги
-        # Логика из менеджера задач
+        task_manager = TaskManager(instance)
+        task_manager.delete_periodic_task()
+        TaskManager.launch_task(instance,
+                                settings.TEMPLATES_TO_TASK['ORDER_CLOSE'],
+                                )
 
 
 class OrderRerieveAPIView(generics.RetrieveAPIView):
@@ -354,7 +360,6 @@ class ExtensionOpenAPIView(generics.CreateAPIView):
         serializer.save(order=self.order,
                         applicant=self.applicant,
                         )
-        # Отправка письма о созданном запросе
 
 
 class ExtensionAcceptAPIView(generics.UpdateAPIView):

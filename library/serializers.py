@@ -3,8 +3,10 @@ from datetime import timedelta, date
 from rest_framework import serializers
 
 from django.db import transaction
+from django.conf import settings
 
 from library import models
+from library.task_manager import TaskManager
 from library.validators import (YearValidator,
                                 PublishedValidator,
                                 VolumeValidator,
@@ -144,9 +146,13 @@ class OrderOpenSerializer(serializers.ModelSerializer):
                       )
     
     def create(self, validated_data):
-        instance = super().create(validated_data)
-        # Отправка Эмеила о выдаче книги
-        # Логика из менеджера задач
+        with transaction.atomic():
+            instance = super().create(validated_data)
+            task_manager = TaskManager(instance)
+            task_manager.start_periodic_task()
+            task_manager.launch_task(instance,
+                                     settings.TEMPLATES_TO_TASK['ORDER_OPEN'],
+                                     )
         return instance
 
 
@@ -193,6 +199,13 @@ class ExtensionOpenSerializer(serializers.ModelSerializer):
                       CountExtensionsValidator('order'),
                       )
 
+    def create(self, validated_data):
+        instance = super().create(validated_data)
+        TaskManager.launch_task(instance,
+                                settings.TEMPLATES_TO_TASK['EXTENSION_OPEN'],
+                                )
+        return instance
+
 
 class ExtensionAcceptSerializer(serializers.ModelSerializer):
     """Сеарилизатор разрешения на продление
@@ -225,7 +238,11 @@ class ExtensionAcceptSerializer(serializers.ModelSerializer):
                                       ))
             extension = super().update(instance, validated_data)
 
-        # Отправка письма
+        task_manager = TaskManager(order)
+        task_manager.update_periodic_task()
+        TaskManager.launch_task(extension,
+                                settings.TEMPLATES_TO_TASK['EXTENSION_ACCEPT'],
+                                )
         return extension
 
 
@@ -249,7 +266,9 @@ class ExtensionCancelSerializer(serializers.ModelSerializer):
         instance.receiving = self.context['request'].user
         instance.solution = 'cancel'
         extension = super().update(instance, validated_data)
-        # Отправка письма
+        TaskManager.launch_task(extension,
+                                settings.TEMPLATES_TO_TASK['EXTENSION_CANCEL'],
+                                )
         return extension
 
 
