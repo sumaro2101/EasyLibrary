@@ -29,11 +29,11 @@ class TestExtension(APITestCase):
             is_librarian=True,
             is_staff=True,
         )
-        author = Author.objects.create(first_name='author',
+        self.author = Author.objects.create(first_name='author',
                                        last_name='author_last',
                                        surname='surname',
                                        )
-        publisher = Publisher.objects.create(
+        self.publisher = Publisher.objects.create(
             name='publisher',
             address='new-york',
             url='https://www.publisher.com/',
@@ -43,12 +43,12 @@ class TestExtension(APITestCase):
         volume = Volume.objects.create(
             name='fantasy_volume',
         )
-        genre = Genre.objects.create(
+        self.genre = Genre.objects.create(
             name_en='fantasy',
             name_ru='Фэнтези',
         )
-        book = Book.objects.create(
-            publisher=publisher,
+        self.book = Book.objects.create(
+            publisher=self.publisher,
             name='book',
             best_seller=True,
             volume=volume,
@@ -59,10 +59,10 @@ class TestExtension(APITestCase):
             circulation=1203,
             is_published=True,
         )
-        book.author.add(author)
-        book.genre.add(genre)
+        self.book.author.add(self.author)
+        self.book.genre.add(self.genre)
         self.order = Order.objects.create(
-            book=book,
+            book=self.book,
             tenant=self.user,
             time_return=date.today() + timedelta(days=30),
         )
@@ -98,8 +98,24 @@ class TestExtension(APITestCase):
     def test_accept_extension(self):
         """Тест принятия продления
         """
+        book = Book.objects.create(
+            publisher=self.publisher,
+            name='book',
+            best_seller=True,
+            age_restriction=16,
+            count_pages=300,
+            year_published=2015,
+            circulation=1203,
+            is_published=True,
+        )
+        book.author.add(self.author)
+        book.genre.add(self.genre)
+        url_order = reverse('library:order_open',
+                            kwargs={'pk': book.pk})
+        response_order = self.client.post(url_order)
+        order = Order.objects.get(pk=response_order.data['id'])
         extension = RequestExtension.objects.create(
-            order=self.order,
+            order=order,
             applicant=self.user,
         )
         self.client.logout()
@@ -116,7 +132,7 @@ class TestExtension(APITestCase):
             'time_response': response.data['time_response'],
             'response_text': None,
             'solution': 'accept',
-            'order': self.order.pk,
+            'order': order.pk,
             'applicant': self.user.pk,
             'receiving': self.librarian.pk,
         })

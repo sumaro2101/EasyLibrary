@@ -33,7 +33,10 @@ class TestUserApi(APITestCase):
                                          'phone': '+79009001000',
                                          'last_login': user.last_login,
                                          'is_staff': False,
-                                         'groups': []
+                                         'groups': [],
+                                         'orders': [],
+                                         'count_orders': 0,
+                                         
                                          })
 
     def test_create_user(self):

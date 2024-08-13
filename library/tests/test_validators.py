@@ -459,9 +459,10 @@ class TestOrderValidators(APITestCase):
         self.client.force_authenticate(user)
 
         class Serializer:
-            class Instance:
-                applicant = user
-            instance = Instance
+            initial_data = {
+                'order': self.order,
+                'applicant': user
+            }
 
         serializer = Serializer
 

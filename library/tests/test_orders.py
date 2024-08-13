@@ -169,16 +169,14 @@ class TestOrder(APITestCase):
     def test_extens_accept_order(self):
         """Тест продления времени выдачи
         """
-        order = Order.objects.create(
-            book=self.book,
-            tenant=self.user,
-            time_return=date.today() + timedelta(days=14),
-        )
-        extension = RequestExtension.objects.create(
-            order=order
-        )
+        url_order = reverse('library:order_open',
+                            kwargs={'pk': self.book.pk})
+        response_order = self.client.post(url_order)
+        url_extension = reverse('library:extension_open',
+                                kwargs={'pk': response_order.data['id']})
+        response_extension = self.client.post(url_extension)
         url = reverse('library:extension_accept',
-                      kwargs={'pk': extension.pk})
+                      kwargs={'pk': response_extension.data['id']})
         self.client.logout()
         librarian = get_user_model().objects.create(
             username='librarian',
@@ -232,13 +230,11 @@ class TestOrder(APITestCase):
     def test_close_order(self):
         """Тест закрытия выдачи книги
         """
-        order = Order.objects.create(
-            book=self.book,
-            tenant=self.user,
-            time_return=date.today() + timedelta(days=30),
-        )
+        url_order = reverse('library:order_open',
+                            kwargs={'pk': self.book.pk})
+        response_order = self.client.post(url_order)
         url = reverse('library:order_close',
-                      kwargs={'pk': order.pk})
+                      kwargs={'pk': response_order.data['id']})
         self.client.logout()
         librarian = get_user_model().objects.create(
             username='librarian',
