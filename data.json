@@ -612,6 +612,78 @@
         }
     },
     {
+        "model": "auth.permission",
+        "pk": 69,
+        "fields": {
+            "name": "Can add выдача",
+            "content_type": 18,
+            "codename": "add_order"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 70,
+        "fields": {
+            "name": "Can change выдача",
+            "content_type": 18,
+            "codename": "change_order"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 71,
+        "fields": {
+            "name": "Can delete выдача",
+            "content_type": 18,
+            "codename": "delete_order"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 72,
+        "fields": {
+            "name": "Can view выдача",
+            "content_type": 18,
+            "codename": "view_order"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 73,
+        "fields": {
+            "name": "Can add запрос",
+            "content_type": 19,
+            "codename": "add_requestextension"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 74,
+        "fields": {
+            "name": "Can change запрос",
+            "content_type": 19,
+            "codename": "change_requestextension"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 75,
+        "fields": {
+            "name": "Can delete запрос",
+            "content_type": 19,
+            "codename": "delete_requestextension"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 76,
+        "fields": {
+            "name": "Can view запрос",
+            "content_type": 19,
+            "codename": "view_requestextension"
+        }
+    },
+    {
         "model": "contenttypes.contenttype",
         "pk": 1,
         "fields": {
@@ -652,6 +724,118 @@
         }
     },
     {
+        "model": "contenttypes.contenttype",
+        "pk": 6,
+        "fields": {
+            "app_label": "django_celery_beat",
+            "model": "solarschedule"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 7,
+        "fields": {
+            "app_label": "django_celery_beat",
+            "model": "intervalschedule"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 8,
+        "fields": {
+            "app_label": "django_celery_beat",
+            "model": "clockedschedule"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 9,
+        "fields": {
+            "app_label": "django_celery_beat",
+            "model": "crontabschedule"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 10,
+        "fields": {
+            "app_label": "django_celery_beat",
+            "model": "periodictasks"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 11,
+        "fields": {
+            "app_label": "django_celery_beat",
+            "model": "periodictask"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 12,
+        "fields": {
+            "app_label": "users",
+            "model": "user"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 13,
+        "fields": {
+            "app_label": "library",
+            "model": "author"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 14,
+        "fields": {
+            "app_label": "library",
+            "model": "publisher"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 15,
+        "fields": {
+            "app_label": "library",
+            "model": "volume"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 16,
+        "fields": {
+            "app_label": "library",
+            "model": "genre"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 17,
+        "fields": {
+            "app_label": "library",
+            "model": "book"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 18,
+        "fields": {
+            "app_label": "library",
+            "model": "order"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 19,
+        "fields": {
+            "app_label": "library",
+            "model": "requestextension"
+        }
+    },
+    {
         "model": "django_celery_beat.crontabschedule",
         "pk": 1,
         "fields": {
@@ -667,7 +851,7 @@
         "model": "django_celery_beat.periodictasks",
         "pk": 1,
         "fields": {
-            "last_update": "2024-08-07T18:13:42.946Z"
+            "last_update": "2024-08-12T21:06:44.692Z"
         }
     },
     {
@@ -692,9 +876,9 @@
             "one_off": false,
             "start_time": null,
             "enabled": true,
-            "last_run_at": null,
-            "total_run_count": 0,
-            "date_changed": "2024-08-07T13:45:44.920Z",
+            "last_run_at": "2024-08-12T22:00:00.051Z",
+            "total_run_count": 1,
+            "date_changed": "2024-08-12T22:01:26.188Z",
             "description": ""
         }
     },
@@ -769,6 +953,306 @@
         }
     },
     {
+        "model": "library.author",
+        "pk": 2,
+        "fields": {
+            "first_name": "Виктор",
+            "last_name": "Дашкевич",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 3,
+        "fields": {
+            "first_name": "Anne",
+            "last_name": "Dar",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 4,
+        "fields": {
+            "first_name": "Татьяна",
+            "last_name": "Мужицкая",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 5,
+        "fields": {
+            "first_name": "Патрик",
+            "last_name": "Кинг",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 6,
+        "fields": {
+            "first_name": "Борис",
+            "last_name": "Акунин",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 7,
+        "fields": {
+            "first_name": "Виктор",
+            "last_name": "Пелевин",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 8,
+        "fields": {
+            "first_name": "Ю",
+            "last_name": "Несбё",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 9,
+        "fields": {
+            "first_name": "Фредрик",
+            "last_name": "Бакман",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 10,
+        "fields": {
+            "first_name": "Бернар",
+            "last_name": "Вербер",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 11,
+        "fields": {
+            "first_name": "Майк",
+            "last_name": "Омер",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 12,
+        "fields": {
+            "first_name": "Лев",
+            "last_name": "Толстой",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 13,
+        "fields": {
+            "first_name": "Сергей",
+            "last_name": "Лукьяненко",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 14,
+        "fields": {
+            "first_name": "Роберт",
+            "last_name": "Кийосаки",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 15,
+        "fields": {
+            "first_name": "Нил",
+            "last_name": "Гейман",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 16,
+        "fields": {
+            "first_name": "Ольга",
+            "last_name": "Примаченко",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 17,
+        "fields": {
+            "first_name": "Джоан Кэтлин",
+            "last_name": "Роулинг",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 18,
+        "fields": {
+            "first_name": "Александра",
+            "last_name": "Маринина",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 19,
+        "fields": {
+            "first_name": "Дэн",
+            "last_name": "Браун",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 20,
+        "fields": {
+            "first_name": "Татьяна",
+            "last_name": "Устинова",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 21,
+        "fields": {
+            "first_name": "Бхагаван",
+            "last_name": "Раджниш",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 22,
+        "fields": {
+            "first_name": "Федор",
+            "last_name": "Достоевский",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 23,
+        "fields": {
+            "first_name": "Дэниел",
+            "last_name": "Киз",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 24,
+        "fields": {
+            "first_name": "Дарья",
+            "last_name": "Донцова",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 25,
+        "fields": {
+            "first_name": "Людмила",
+            "last_name": "Улицкая",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 26,
+        "fields": {
+            "first_name": "Борис",
+            "last_name": "Шабрин",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 27,
+        "fields": {
+            "first_name": "Андрей",
+            "last_name": "Тихомиров",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 28,
+        "fields": {
+            "first_name": "Морган",
+            "last_name": "Райс",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 29,
+        "fields": {
+            "first_name": "Максим",
+            "last_name": "Горький",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 30,
+        "fields": {
+            "first_name": "Марина",
+            "last_name": "Серова",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
+        "model": "library.author",
+        "pk": 31,
+        "fields": {
+            "first_name": "Прилепин",
+            "last_name": "Захар",
+            "surname": null,
+            "portrait": ""
+        }
+    },
+    {
         "model": "library.publisher",
         "pk": 1,
         "fields": {
@@ -777,6 +1261,105 @@
             "url": "https://www.example.com/",
             "email": "email@gmail.com",
             "phone": "+79006001333"
+        }
+    },
+    {
+        "model": "library.publisher",
+        "pk": 2,
+        "fields": {
+            "name": "Бомбора",
+            "address": "Москва, улица Зорге 1 строение 1",
+            "url": "https://bombora.ru/",
+            "email": "bombora@eksmo.ru",
+            "phone": "+74954116886"
+        }
+    },
+    {
+        "model": "library.publisher",
+        "pk": 3,
+        "fields": {
+            "name": "АСТ",
+            "address": "г. Москва, Пресненская наб., д.6, стр.2, БЦ «Империя»",
+            "url": "https://ast.ru/",
+            "email": "ask@ast.ru",
+            "phone": "+74999516000"
+        }
+    },
+    {
+        "model": "library.publisher",
+        "pk": 4,
+        "fields": {
+            "name": "Детская литература",
+            "address": "г. Москва, Новочерёмушкинская ул., д. 61",
+            "url": "https://detlit.ru",
+            "email": "dl@detlit.ru",
+            "phone": "+74959335565"
+        }
+    },
+    {
+        "model": "library.publisher",
+        "pk": 5,
+        "fields": {
+            "name": "Художественная литература",
+            "address": "Россия, 107078, г. Москва, ул. Новая Басманная, 19 стр. 1",
+            "url": "https://hudlit.com/",
+            "email": "REALISIHL@MAIL.RU",
+            "phone": "+74992618251"
+        }
+    },
+    {
+        "model": "library.publisher",
+        "pk": 6,
+        "fields": {
+            "name": "Захаров",
+            "address": "Российская Федерация, г. Москва, Столовый переулок, дом 4, офис 9",
+            "url": "https://www.zakharov.ru/",
+            "email": "info@zakharov.ru",
+            "phone": "+74956971235"
+        }
+    },
+    {
+        "model": "library.publisher",
+        "pk": 7,
+        "fields": {
+            "name": "Центрполиграф",
+            "address": "Москва, 111024, 1-я ул.Энтузиастов, д.15",
+            "url": "http://www.cnpol.ru/",
+            "email": "cnpol@cnpol.ru",
+            "phone": "+74957814546"
+        }
+    },
+    {
+        "model": "library.publisher",
+        "pk": 8,
+        "fields": {
+            "name": "Вэчэ",
+            "address": "г. Москва, Алтуфьевское шоссе, 48 корп. 1",
+            "url": "https://www.veche.ru/",
+            "email": "pr@veche.ru",
+            "phone": "+74999404870"
+        }
+    },
+    {
+        "model": "library.publisher",
+        "pk": 9,
+        "fields": {
+            "name": "Феникс",
+            "address": "Ростовская обл.,г. Ростов-на-Дону, ул. Варфоломеева,д.150, кабинет 31",
+            "url": "https://fenixbooks.ru/",
+            "email": "info@fenixbooks.ru",
+            "phone": "+78632618950"
+        }
+    },
+    {
+        "model": "library.publisher",
+        "pk": 10,
+        "fields": {
+            "name": "Азбука-аттикус",
+            "address": "г. Москва, Пресненская набережная, 6с2, эт. 29",
+            "url": "https://azbooka.ru/",
+            "email": "info@atticus-group.ru",
+            "phone": "+74959337601"
         }
     },
     {
@@ -795,11 +1378,28 @@
         }
     },
     {
+        "model": "library.genre",
+        "pk": 2,
+        "fields": {
+            "name_en": "fiction",
+            "name_ru": "Художественная литература"
+        }
+    },
+    {
+        "model": "library.genre",
+        "pk": 3,
+        "fields": {
+            "name_en": "Modern prose",
+            "name_ru": "Современная проза"
+        }
+    },
+    {
         "model": "library.book",
         "pk": 1,
         "fields": {
             "publisher": 1,
             "name": "goob_book2",
+            "quantity": 1,
             "image": "",
             "best_seller": false,
             "volume": 1,
@@ -814,6 +1414,31 @@
             ],
             "genre": [
                 1
+            ]
+        }
+    },
+    {
+        "model": "library.book",
+        "pk": 2,
+        "fields": {
+            "publisher": 3,
+            "name": "Собаки и другие люди",
+            "quantity": 1,
+            "image": "",
+            "best_seller": false,
+            "volume": null,
+            "num_of_volume": 0,
+            "age_restriction": 16,
+            "count_pages": 256,
+            "year_published": 2020,
+            "circulation": 256,
+            "is_published": true,
+            "author": [
+                31
+            ],
+            "genre": [
+                2,
+                3
             ]
         }
     }

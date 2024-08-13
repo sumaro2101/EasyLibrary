@@ -1,6 +1,6 @@
 from datetime import timedelta, date
 
-from rest_framework import serializers
+from rest_framework import serializers, validators
 
 from django.db import transaction
 from django.conf import settings
@@ -93,15 +93,28 @@ class AuthorSerializer(serializers.ModelSerializer):
     books = serializers.StringRelatedField(many=True,
                                            read_only=True,
                                            source='book_set')
+    count_books = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = models.Author
-        fields = ('first_name',
+        fields = ('pk',
+                  'first_name',
                   'last_name',
                   'surname',
                   'portrait',
                   'books',
+                  'count_books',
                   )
+        validators = (validators.UniqueTogetherValidator(
+            models.Author.objects.get_queryset(),
+            ('first_name',
+             'last_name',
+             ),
+        ),
+                      )
+    
+    def get_count_books(self, obj):
+        return obj.book_set.count()
 
 
 class VolumeSerializer(serializers.ModelSerializer):

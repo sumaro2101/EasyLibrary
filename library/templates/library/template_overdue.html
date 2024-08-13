@@ -2,7 +2,7 @@
 {% autoescape off %}
 Добрый день
 Ваша выдача №{{ pk_order }}
-Книги {{ book_name }} была просрочена{% if overdue_days %} на {{ overdue_days }} дней.{% else %}.{% endif %}
+Книга: {{ book_name }} - была просрочена{% if overdue_days %} на {{ overdue_days }} дней.{% else %}.{% endif %}
 Ваша дата возврата книги {{ day_to_return }}.
 
 Просим вас вернуть книгу.
