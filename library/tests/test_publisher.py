@@ -21,7 +21,7 @@ class TestPublisher(APITestCase):
             is_staff=True,
         )
         self.client.force_authenticate(librarian)
-        
+
     def test_retrieve_publisher(self):
         """Тест вывода издателя
         """

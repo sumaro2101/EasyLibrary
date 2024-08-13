@@ -2,7 +2,7 @@ from datetime import timedelta, date
 
 from rest_framework import serializers, validators
 
-from django.db import transaction, connection
+from django.db import transaction
 from django.conf import settings
 
 from library import models
@@ -58,7 +58,7 @@ class BookCreateSerializer(serializers.ModelSerializer):
                       VolumeValidator('volume',
                                       'num_of_volume',
                                       ),
-                     )
+                      )
 
 
 class BookRetrieveSerializer(serializers.ModelSerializer):
@@ -112,7 +112,7 @@ class AuthorSerializer(serializers.ModelSerializer):
              ),
         ),
                       )
-    
+
     def get_count_books(self, obj):
         return obj.book_set.count()
 
@@ -123,6 +123,7 @@ class VolumeSerializer(serializers.ModelSerializer):
     books = BookRetrieveSerializer(many=True,
                                    read_only=True,
                                    )
+
     class Meta:
         model = models.Volume
         fields = ('pk',
@@ -157,7 +158,7 @@ class OrderOpenSerializer(serializers.ModelSerializer):
         validators = (OrderRepeatValidator('book'),
                       BookQuantityValidator('book'),
                       )
-    
+
     def create(self, validated_data):
         instance = super().create(validated_data)
         instance = models.Order.objects.filter(
@@ -169,8 +170,8 @@ class OrderOpenSerializer(serializers.ModelSerializer):
         task_manager = TaskManager(instance)
         task_manager.start_periodic_task()
         task_manager.launch_task(instance,
-                                    settings.TEMPLATES_TO_TASK['ORDER_OPEN'],
-                                    )
+                                 settings.TEMPLATES_TO_TASK['ORDER_OPEN'],
+                                 )
         return instance
 
 

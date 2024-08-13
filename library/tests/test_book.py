@@ -25,9 +25,9 @@ class TestBook(APITestCase):
             is_staff=True,
         )
         self.author = Author.objects.create(first_name='author',
-                                       last_name='author_last',
-                                       surname='surname',
-                                       )
+                                            last_name='author_last',
+                                            surname='surname',
+                                            )
         self.publisher = Publisher.objects.create(
             name='publisher',
             address='new-york',
@@ -199,7 +199,7 @@ class TestBook(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['name'], 'book_update')
-        
+
     def test_permission_update_book(self):
         """Тест защиты доступа для книги
         """

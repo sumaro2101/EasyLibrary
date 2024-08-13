@@ -14,6 +14,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
                                      source='order_set',
                                      )
     count_orders = serializers.SerializerMethodField()
+
     class Meta:
         model = get_user_model()
         fields = ('id',
@@ -52,7 +53,7 @@ class UserProfileCreateSerializer(serializers.ModelSerializer):
         validators = [ValidatorSetPasswordUser(['password',
                                                 'password_check',
                                                 ])]
-    
+
     def create(self, validated_data):
         instance = HandleCreateUser(self.Meta.model,
                                     validated_data,

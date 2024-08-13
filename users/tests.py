@@ -292,4 +292,6 @@ class TestLibrarianAPI(APITestCase):
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(get_user_model().objects.count(), 2)
-        self.assertFalse(get_user_model().objects.get(pk=librarian.pk).is_active)
+        self.assertFalse(get_user_model().objects.get(
+            pk=librarian.pk,
+            ).is_active)
