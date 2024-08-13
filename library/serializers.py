@@ -2,7 +2,7 @@ from datetime import timedelta, date
 
 from rest_framework import serializers, validators
 
-from django.db import transaction
+from django.db import transaction, connection
 from django.conf import settings
 
 from library import models
@@ -159,13 +159,18 @@ class OrderOpenSerializer(serializers.ModelSerializer):
                       )
     
     def create(self, validated_data):
-        with transaction.atomic():
-            instance = super().create(validated_data)
-            task_manager = TaskManager(instance)
-            task_manager.start_periodic_task()
-            task_manager.launch_task(instance,
-                                     settings.TEMPLATES_TO_TASK['ORDER_OPEN'],
-                                     )
+        instance = super().create(validated_data)
+        instance = models.Order.objects.filter(
+            pk=instance.pk,
+            ).select_related(
+                'book',
+                'tenant',
+            ).get()
+        task_manager = TaskManager(instance)
+        task_manager.start_periodic_task()
+        task_manager.launch_task(instance,
+                                    settings.TEMPLATES_TO_TASK['ORDER_OPEN'],
+                                    )
         return instance
 
 

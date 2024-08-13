@@ -137,7 +137,7 @@ class TaskManager:
             raise ObjectDoesNotExist(f'Задача по pk {pk} не найдена')
 
     def start_periodic_task(self) -> PeriodicTask:
-        """Запуск периодическо задачи
+        """Запуск периодической задачи
         """
         return self._create_periodic_task(self.order)
 
@@ -166,4 +166,4 @@ class TaskManager:
         else:
             order = f'EX_{model.pk}'
 
-        mail_task.delay(order, template)
+        return mail_task.delay(order, template)

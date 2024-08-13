@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from typing import Dict, Union
 from django.urls import NoReverseMatch
 from django.template import TemplateDoesNotExist, loader
@@ -124,4 +124,4 @@ def send_mails(order: str,
                                            server_mail,
                                            user_email,
                                            )
-    email_message.send()
+    return email_message.send()

@@ -201,12 +201,13 @@ CSRF_TRUSTED_ORIGINS = ['http://localhost:8000',]
 
 CORS_ALLOW_ALL_ORIGINS = False
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': find_env('REDIS_CACHE'),
+if not DOCKER_DEBUG:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': find_env('REDIS_CACHE'),
+        }
     }
-}
 
 
 # Internationalization
