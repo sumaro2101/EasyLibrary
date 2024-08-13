@@ -141,7 +141,7 @@ class TestGenre(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Genre.objects.count(), 0)
-    
+
     def test_delete_genre_permission(self):
         """Тест прав доступа удаления жанра
         """

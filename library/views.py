@@ -52,7 +52,7 @@ class BookCreateAPIView(generics.CreateAPIView):
     """
     serializer_class = BookCreateSerializer
     queryset = Book.objects.get_queryset()
-    permission_classes = [permissions.IsAuthenticated & 
+    permission_classes = [permissions.IsAuthenticated &
                           IsSuperUser | IsLibrarian]
 
 
@@ -61,7 +61,7 @@ class BookUpdateAPIView(generics.UpdateAPIView):
     """
     serializer_class = BookCreateSerializer
     queryset = Book.objects.get_queryset()
-    permission_classes = [permissions.IsAuthenticated & 
+    permission_classes = [permissions.IsAuthenticated &
                           IsSuperUser | IsLibrarian]
 
 
@@ -69,7 +69,7 @@ class BookDeleteAPIView(generics.DestroyAPIView):
     """Енд поинт удаления книги
     """
     queryset = Book.objects.get_queryset()
-    permission_classes = [permissions.IsAuthenticated & 
+    permission_classes = [permissions.IsAuthenticated &
                           IsSuperUser | IsLibrarian]
 
 
@@ -130,7 +130,7 @@ class AuthorCreateAPIView(generics.CreateAPIView):
     """
     serializer_class = AuthorSerializer
     queryset = Author.objects.get_queryset()
-    permission_classes = [permissions.IsAuthenticated & 
+    permission_classes = [permissions.IsAuthenticated &
                           IsSuperUser | IsLibrarian]
 
 
@@ -139,7 +139,7 @@ class AuthorUpdateAPIView(generics.UpdateAPIView):
     """
     serializer_class = AuthorSerializer
     queryset = Author.objects.get_queryset()
-    permission_classes = [permissions.IsAuthenticated & 
+    permission_classes = [permissions.IsAuthenticated &
                           IsSuperUser | IsLibrarian]
 
 
@@ -147,7 +147,7 @@ class AuthorDeleteAPIView(generics.DestroyAPIView):
     """Енд поинт удаления автора
     """
     queryset = Author.objects.get_queryset()
-    permission_classes = [permissions.IsAuthenticated & 
+    permission_classes = [permissions.IsAuthenticated &
                           IsSuperUser | IsLibrarian]
 
 
@@ -176,7 +176,7 @@ class PublisherCreateAPIView(generics.CreateAPIView):
     """
     serializer_class = PublisherSerializer
     queryset = Publisher.objects.get_queryset()
-    permission_classes = [permissions.IsAuthenticated & 
+    permission_classes = [permissions.IsAuthenticated &
                           IsSuperUser | IsLibrarian]
 
 
@@ -185,7 +185,7 @@ class PublisherUpdateAPIView(generics.UpdateAPIView):
     """
     serializer_class = PublisherSerializer
     queryset = Publisher.objects.get_queryset()
-    permission_classes = [permissions.IsAuthenticated & 
+    permission_classes = [permissions.IsAuthenticated &
                           IsSuperUser | IsLibrarian]
 
 
@@ -193,7 +193,7 @@ class PublisherDeleteAPIView(generics.DestroyAPIView):
     """Енд поинт удаления издателя
     """
     queryset = Publisher.objects.get_queryset()
-    permission_classes = [permissions.IsAuthenticated & 
+    permission_classes = [permissions.IsAuthenticated &
                           IsSuperUser | IsLibrarian]
 
 
@@ -224,7 +224,7 @@ class VolumeCreateAPIView(generics.CreateAPIView):
     """
     serializer_class = VolumeSerializer
     queryset = Volume.objects.get_queryset()
-    permission_classes = [permissions.IsAuthenticated & 
+    permission_classes = [permissions.IsAuthenticated &
                           IsSuperUser | IsLibrarian]
 
 
@@ -233,7 +233,7 @@ class VolumeUpdateAPIView(generics.UpdateAPIView):
     """
     serializer_class = VolumeSerializer
     queryset = Volume.objects.get_queryset()
-    permission_classes = [permissions.IsAuthenticated & 
+    permission_classes = [permissions.IsAuthenticated &
                           IsSuperUser | IsLibrarian]
 
 
@@ -241,7 +241,7 @@ class VolumeDeleteAPIView(generics.DestroyAPIView):
     """Енд поинт удаления тома
     """
     queryset = Volume.objects.get_queryset()
-    permission_classes = [permissions.IsAuthenticated & 
+    permission_classes = [permissions.IsAuthenticated &
                           IsSuperUser | IsLibrarian]
 
 
@@ -272,7 +272,7 @@ class GenreCreateAPIView(generics.CreateAPIView):
     """
     serializer_class = GenreSerializer
     queryset = Genre.objects.get_queryset()
-    permission_classes = [permissions.IsAuthenticated & 
+    permission_classes = [permissions.IsAuthenticated &
                           IsSuperUser | IsLibrarian]
 
 
@@ -281,7 +281,7 @@ class GenreUpdateAPIView(generics.UpdateAPIView):
     """
     serializer_class = GenreSerializer
     queryset = Genre.objects.get_queryset()
-    permission_classes = [permissions.IsAuthenticated & 
+    permission_classes = [permissions.IsAuthenticated &
                           IsSuperUser | IsLibrarian]
 
 
@@ -289,7 +289,7 @@ class GenreDeleteAPIView(generics.DestroyAPIView):
     """Енд поинт удаления жанра
     """
     queryset = Genre.objects.get_queryset()
-    permission_classes = [permissions.IsAuthenticated & 
+    permission_classes = [permissions.IsAuthenticated &
                           IsSuperUser | IsLibrarian]
 
 
@@ -318,7 +318,7 @@ class OrderOpenAPIView(generics.CreateAPIView):
     """
     queryset = Order.objects.get_queryset()
     serializer_class = OrderOpenSerializer
-    
+
     def create(self, request, *args, **kwargs):
         try:
             self.book = Book.objects.get(pk=self.kwargs['pk'])

@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date
 from typing import Dict, Union
 from django.urls import NoReverseMatch
 from django.template import TemplateDoesNotExist, loader
@@ -12,41 +12,41 @@ from library.models import Order, RequestExtension
 def get_info_order(model: Union[Order,
                                 RequestExtension,
                                 ]) -> Dict:
-        """Отдает готовый словарь для контекста задачи
-        """
-        model_name = model._meta.model_name
-        if model_name == 'order':
-            extension = None
-            model = model
-        else:
-            extension = model
-            model = extension.order
+    """Отдает готовый словарь для контекста задачи
+    """
+    model_name = model._meta.model_name
+    if model_name == 'order':
+        extension = None
+        model = model
+    else:
+        extension = model
+        model = extension.order
 
-        support = 'http://easyLibrary/support/ticket/'
-        age_restriction = model.book.age_restriction
-        if age_restriction == 18:
-            count_days = 30
-        else:
-            count_days = 14
-        if date.today() >= model.time_return:
-            overdue_count = date.today() - model.time_return
-            overdue_days = overdue_count.days
-        else:
-            overdue_days = None
+    support = 'http://easyLibrary/support/ticket/'
+    age_restriction = model.book.age_restriction
+    if age_restriction == 18:
+        count_days = 30
+    else:
+        count_days = 14
+    if date.today() >= model.time_return:
+        overdue_count = date.today() - model.time_return
+        overdue_days = overdue_count.days
+    else:
+        overdue_days = None
 
-        order_info = {
-            'pk_extension': extension.pk if extension else None,
-            'response_text': extension.response_text if extension else None,
-            'pk_order': model.pk,
-            'book_name': model.book.name,
-            'age': f'{age_restriction}+',
-            'count_days': count_days,
-            'day_to_return': model.time_return,
-            'support': support,
-            'library': 'easyLibrary',
-            'overdue_days': overdue_days if overdue_days else None,
-        }
-        return order_info
+    order_info = {
+        'pk_extension': extension.pk if extension else None,
+        'response_text': extension.response_text if extension else None,
+        'pk_order': model.pk,
+        'book_name': model.book.name,
+        'age': f'{age_restriction}+',
+        'count_days': count_days,
+        'day_to_return': model.time_return,
+        'support': support,
+        'library': 'easyLibrary',
+        'overdue_days': overdue_days if overdue_days else None,
+    }
+    return order_info
 
 
 def send_mails(order: str,

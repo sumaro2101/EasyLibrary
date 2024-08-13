@@ -20,11 +20,11 @@ class Author(models.Model):
                                  )
 
     surname = models.CharField(max_length=150,
-                                   verbose_name='отчество',
-                                   help_text='Отчество указанного автора',
-                                   blank=True,
-                                   null=True,
-                                   )
+                               verbose_name='отчество',
+                               help_text='Отчество указанного автора',
+                               blank=True,
+                               null=True,
+                               )
 
     portrait = models.ImageField(upload_to=f'author/{first_name}/{last_name}/',
                                  blank=True,
@@ -54,9 +54,9 @@ class Publisher(models.Model):
                             )
 
     address = models.CharField(max_length=300,
-                              verbose_name='адресс издателя',
-                              help_text='Адресс издателя',
-                              )
+                               verbose_name='адресс издателя',
+                               help_text='Адресс издателя',
+                               )
 
     url = models.URLField(max_length=256,
                           verbose_name='сайт',
@@ -166,9 +166,9 @@ class Book(models.Model):
 
     best_seller = models.BooleanField(verbose_name='лидер продаж',
                                       default=False,
-                                      help_text='Является ли книга\
-                                        лидером продаж',
-                                        )
+                                      help_text='Является ли книга '
+                                      'лидером продаж',
+                                      )
 
     volume = models.ForeignKey(Volume,
                                verbose_name='том',
@@ -179,11 +179,12 @@ class Book(models.Model):
                                null=True,
                                )
 
-    num_of_volume = models.PositiveSmallIntegerField(null=True,
-                                                     blank=True,
-                                                     verbose_name='номер из тома',
-                                                     help_text='Какая по номеру книга в томе',
-                                                     )
+    num_of_volume = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        verbose_name='номер из тома',
+        help_text='Какая по номеру книга в томе',
+        )
 
     age_restriction = models.PositiveSmallIntegerField(
         choices=[
@@ -202,9 +203,10 @@ class Book(models.Model):
         help_text='Количество страниц данной книги',
         )
 
-    year_published = models.PositiveIntegerField(verbose_name='дата издательства',
-                                                 help_text='Дата издательства книги',
-                                                 )
+    year_published = models.PositiveIntegerField(
+        verbose_name='дата издательства',
+        help_text='Дата издательства книги',
+        )
 
     genre = models.ManyToManyField(Genre,
                                    verbose_name='жанры',
@@ -263,10 +265,10 @@ class Order(models.Model):
                                    help_text='Время когда нужно '
                                    'вернуть книгу',
                                    )
-    
+
     status = models.CharField(choices=[('active', 'активно'),
-                                        ('end', 'закончено'),
-                                        ],
+                                       ('end', 'закончено'),
+                                       ],
                               default='active',
                               max_length=30,
                               )

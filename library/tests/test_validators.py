@@ -27,11 +27,12 @@ from library.models import (Book,
 class TestValidators(TestCase):
     """Тесты валидаторов
     """
-    
+
     def setUp(self) -> None:
         self.volume = Volume.objects.create(
             name='fantasy_volume',
         )
+
         class Serializer:
             class Instance:
                 volume = self.volume
@@ -84,7 +85,7 @@ class TestValidators(TestCase):
 
         with self.assertRaises(ValidationError):
             validator(value2, self.serializer)
-      
+
     def test_volume_validator_fields(self):
         """Тест валидатора на входящие значения полей
         """
@@ -106,7 +107,7 @@ class TestValidators(TestCase):
 
         self.assertEqual(validator(value1, self.serializer), None)
         self.assertEqual(validator(value2, self.serializer), None)
-        
+
     def test_wrong_value_validator(self):
         """Тест валидатора на указания номера тома без значения тома
         """
@@ -182,7 +183,10 @@ class TestValidators(TestCase):
             'circulation': 0,
             'is_published': False,
         }
-        validator = PublishedValidator('best_seller', 'circulation', 'is_published')
+        validator = PublishedValidator('best_seller',
+                                       'circulation',
+                                       'is_published',
+                                       )
 
         self.assertEqual(validator(value, self.serializer), None)
 
@@ -205,7 +209,10 @@ class TestValidators(TestCase):
             'is_published': True,
         }
 
-        validator = PublishedValidator('best_seller', 'circulation', 'is_published')
+        validator = PublishedValidator('best_seller',
+                                       'circulation',
+                                       'is_published',
+                                       )
 
         with self.assertRaises(ValidationError):
             validator(value1, self.serializer)
@@ -226,9 +233,9 @@ class TestOrderValidators(APITestCase):
             password='testpassword',
         )
         self.author = Author.objects.create(first_name='author',
-                                       last_name='author_last',
-                                       surname='surname',
-                                       )
+                                            last_name='author_last',
+                                            surname='surname',
+                                            )
         self.publisher = Publisher.objects.create(
             name='publisher',
             address='new-york',
@@ -264,6 +271,7 @@ class TestOrderValidators(APITestCase):
             tenant=self.user,
             time_return=date.today() + timedelta(days=30),
         )
+
         class SerializerCreate:
             initial_data = {
                 'book': self.book,
@@ -314,6 +322,7 @@ class TestOrderValidators(APITestCase):
         data = {
             'book': book,
         }
+
         class SerializerCreate:
             initial_data = {
                 'book': book,
@@ -371,6 +380,7 @@ class TestOrderValidators(APITestCase):
         data = {
             'book': book
         }
+
         class SerializerCreate:
             initial_data = {
                 'book': book,
@@ -396,6 +406,7 @@ class TestOrderValidators(APITestCase):
             order=self.order,
             applicant=self.user
         )
+
         class Serializer:
             initial_data = {
                 'order': self.order,
@@ -413,6 +424,7 @@ class TestOrderValidators(APITestCase):
         """Тест валидатора на правильные значения
         """
         data = {}
+
         class Serializer:
             initial_data = {
                 'order': self.order,
@@ -445,6 +457,7 @@ class TestOrderValidators(APITestCase):
         )
         self.client.logout()
         self.client.force_authenticate(user)
+
         class Serializer:
             class Instance:
                 applicant = user
@@ -455,7 +468,7 @@ class TestOrderValidators(APITestCase):
         with self.assertRaises(ValidationError):
             validator(data, serializer)
 
-    def test_some_user_validator(self):
+    def test_some_user_validator1(self):
         """Тест валидатора на правильные значения
         """
         data = {
@@ -480,13 +493,14 @@ class TestOrderValidators(APITestCase):
             applicant=self.user,
             solution='cancel',
         )
+
         class Serializer:
             instance = extension
 
         serializer = Serializer
         data = {}
         validator = ResponseValidator('solution')
-        
+
         with self.assertRaises(ValidationError):
             validator(data, serializer)
 
@@ -497,6 +511,7 @@ class TestOrderValidators(APITestCase):
             order=self.order,
             applicant=self.user,
         )
+
         class Serializer:
             instance = extension
 
@@ -516,6 +531,7 @@ class TestOrderValidators(APITestCase):
             count_extensions=2,
         )
         data = {}
+
         class Serializer:
             initial_data = {
                 'order': order,
@@ -538,6 +554,7 @@ class TestOrderValidators(APITestCase):
             time_return=date.today() + timedelta(days=30),
             status='end',
         )
+
         class Serializer:
             initial_data = {
                 'order': order,
@@ -559,6 +576,7 @@ class TestOrderValidators(APITestCase):
             tenant=self.user,
             time_return=date.today() + timedelta(days=30),
         )
+
         class Serializer:
             initial_data = {
                 'order': order,

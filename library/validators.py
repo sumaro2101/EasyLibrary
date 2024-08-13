@@ -16,7 +16,7 @@ def get_value(field: str,
               serializer: ModelSerializer,
               ) -> Any:
     """Функция выполняющая получение значения
-    исходя из того что - пользователь желает изменить поле 
+    исходя из того что - пользователь желает изменить поле
     или пользователь просто не указал его
     """
     try:
@@ -70,13 +70,13 @@ class YearValidator:
         match published:
             case True:
                 if not 1456 < year < date.today().year:
-                    raise ValidationError({'year':
-                        'Значение год не может быть меньше "1456"\
-                            или больше текущего года'})
+                    raise ValidationError({'year': 'Значение год не '
+                                           'может быть меньше "1456" '
+                                           'или больше текущего года'})
             case False:
                 if not 1456 < year:
-                    raise ValidationError({'year':
-                        'Значение год не может быть меньше "1456"'})
+                    raise ValidationError({'year': 'Значение год не может '
+                                           'быть меньше "1456"'})
 
     def __call__(self, attrs, serializer) -> Any:
         need_check = tigger_to_check(attrs, self.year, self.published)
@@ -111,14 +111,12 @@ class VolumeValidator:
         if volume and not num_of_volume:
             raise ValidationError(
                 {'num_of_volume': 'Неоходимо указать номер книги\
-                    из тома, либо номер не может быть нулем',
-                    }
+                    из тома, либо номер не может быть нулем'}
             )
         if volume is None and num_of_volume:
             raise ValidationError(
                 {'volume': 'Неоходимо указать к какому тому\
-                    принадлежит книга если указан номер в томе',
-                    }
+                    принадлежит книга если указан номер в томе'}
             )
 
     def _check_dublicate_number_of_volume(self,
@@ -133,8 +131,7 @@ class VolumeValidator:
             if volume.exists():
                 raise ValidationError(
                     {'num_of_volume': 'В данном томе уже присутсвует\
-                        книга с таким номером',
-                        }
+                        книга с таким номером'}
                 )
 
     def __call__(self, attrs, serializer) -> Any:
@@ -176,8 +173,7 @@ class PublishedValidator:
                 if not circulation:
                     raise ValidationError(
                         {'circulation':
-                            'Опубликованная книга не может быть без тиража',
-                            }
+                            'Опубликованная книга не может быть без тиража'}
                     )
             case False:
                 if circulation or best_seller:
@@ -185,8 +181,7 @@ class PublishedValidator:
                         {'circulation, best_seller':
                             'Книга которая не была опубликована\
                                 не может быть лидером продаж\
-                                    или иметь тираж',
-                                    }
+                                    или иметь тираж'}
                     )
 
     def __call__(self, attrs, serializer) -> Any:
@@ -208,6 +203,7 @@ class OrderRepeatValidator:
     выдачи одной и той же книги
     """
     requires_context = True
+
     def __init__(self, field: str) -> None:
         if not isinstance(field, str):
             raise TypeError(f'{field}, должен быть строкой')
@@ -237,6 +233,7 @@ class BookQuantityValidator:
     в библиотеке
     """
     requires_context = True
+
     def __init__(self, field: str) -> None:
         if not isinstance(field, str):
             raise TypeError(f'{field}, должен быть строкой')
@@ -253,8 +250,7 @@ class BookQuantityValidator:
         if quantity_orders == quantity_book:
             raise ValidationError(
                 {'book':
-                    'К сожалению этой книги в данный момент нет в наличии'
-                    }
+                    'К сожалению этой книги в данный момент нет в наличии'}
             )
 
     def __call__(self, attrs, serializer) -> Any:
@@ -267,6 +263,7 @@ class ExtensionValidator:
     запроса на продление
     """
     requires_context = True
+
     def __init__(self, field: str) -> None:
         if not isinstance(field, str):
             raise TypeError(f'{field}, должен быть строкой')
@@ -278,9 +275,10 @@ class ExtensionValidator:
                                      ) -> None:
         """Функция проверки повторения запроса на продление
         """
-        instance_in_extension = RequestExtension.objects.filter(Q(applicant=user) &
-                                                                Q(order=order) &
-                                                                Q(solution='wait'))
+        instance_in_extension = RequestExtension.objects.filter(
+            Q(applicant=user) &
+            Q(order=order) &
+            Q(solution='wait'))
         if instance_in_extension.exists():
             raise ValidationError(
                 {'order': 'Ваша заявка рассматривается, ожидайте'}
@@ -297,6 +295,7 @@ class SomeUserValidator:
     тем же пользователем которому выдали книгу
     """
     requires_context = True
+
     def __init__(self, field: str) -> None:
         if not isinstance(field, str):
             raise TypeError(f'{field}, должен быть строкой')
@@ -312,8 +311,7 @@ class SomeUserValidator:
         if not some_user:
             raise ValidationError(
                 {'order':
-                    'Вы не можете создавать заявления только на свои книги',
-                    }
+                    'Вы не можете создавать заявления только на свои книги'}
             )
 
     def __call__(self, attrs, serializer) -> Any:
@@ -327,6 +325,7 @@ class ResponseValidator:
     еще не обработан
     """
     requires_context = True
+
     def __init__(self, field: str) -> None:
         if not isinstance(field, str):
             raise TypeError(f'{field}, должен быть строкой')
@@ -340,8 +339,7 @@ class ResponseValidator:
         if not solution == 'wait':
             raise ValidationError(
                 {'error':
-                    'По данному запросу решение уже было вынесено',
-                    }
+                    'По данному запросу решение уже было вынесено'}
             )
 
     def __call__(self, attrs, serializer) -> Any:
@@ -354,22 +352,22 @@ class CountExtensionsValidator:
     продлений не превышает норму
     """
     requires_context = True
+
     def __init__(self, field: str) -> None:
         if not isinstance(field, str):
             raise TypeError(f'{field}, должен быть строкой')
         self.field = field
 
     def _check_count_extensions(self,
-                        count_extensions: int,
-                        ) -> None:
+                                count_extensions: int,
+                                ) -> None:
         """Функция проверки повторения запроса на продление
         """
         if count_extensions >= 2:
             raise ValidationError(
                 {'count_extensions':
                     'Текущая книга уже была продленна максимальное '
-                    'количество раз',
-                    }
+                    'количество раз'}
             )
 
     def __call__(self, attrs, serializer) -> Any:
@@ -383,6 +381,7 @@ class IsActiveOrderValidator:
     не возвращена
     """
     requires_context = True
+
     def __init__(self, field: str) -> None:
         if not isinstance(field, str):
             raise TypeError(f'{field}, должен быть строкой')

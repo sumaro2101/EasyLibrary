@@ -9,7 +9,7 @@ class IsLibrarian(BasePermission):
         'forbidden': 'Это действие может совершать только библиотекарь',
         }
     code = status.HTTP_403_FORBIDDEN
-    
+
     def has_permission(self, request, view):
         return request.user.is_librarian
 
