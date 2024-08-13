@@ -19,3 +19,5 @@ gunicorn==22.0.0
 pillow==10.3.0
 django-extensions==3.2.3
 django-debug-toolbar==4.3.0
+django-cachalot==2.6.3
+django-redis==5.4.0

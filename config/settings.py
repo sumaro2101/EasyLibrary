@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # cachalot
+    'cachalot',
     # rest-framework
     'rest_framework',
     # django-filter
@@ -198,6 +200,14 @@ CORS_ALLOWED_ORIGINS = ['http://localhost:8000', 'https://api.telegram.org']
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8000',]
 
 CORS_ALLOW_ALL_ORIGINS = False
+
+if not DOCKER_DEBUG:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': find_env('REDIS_CACHE'),
+        }
+    }
 
 
 # Internationalization
