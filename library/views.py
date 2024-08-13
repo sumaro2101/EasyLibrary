@@ -4,6 +4,7 @@ from rest_framework import generics, status
 from rest_framework import permissions
 from rest_framework.filters import OrderingFilter
 from rest_framework.response import Response
+
 from django_filters.rest_framework import backends as filters
 
 from django.db.models import Q
@@ -37,6 +38,12 @@ from library.serializers import (BookCreateSerializer,
                                  )
 from library.permissions import IsLibrarian, IsSuperUser, IsCurrentUser
 from library.task_manager import TaskManager
+from library.paginators import (BasePaginate,
+                                PaginageVolumes,
+                                PaginagePublishers,
+                                PaginageGenres,
+                                PaginateExtensions
+                                )
 
 
 # Книга
@@ -114,6 +121,7 @@ class BookListAPIView(generics.ListAPIView):
                        'count_pages',
                        'author',
                        )
+    pagination_class = BasePaginate
 
 
 # Автор
@@ -159,6 +167,7 @@ class AuthorListAPIView(generics.ListAPIView):
     permission_classes = [permissions.AllowAny]
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_fields = ('last_name', 'first_name',)
+    pagination_class = BasePaginate
 
 
 # Издатель
@@ -206,6 +215,7 @@ class PublisherListAPIView(generics.ListAPIView):
                        OrderingFilter,)
     filterset_fields = ('name', 'address',)
     ordering_fields = ('name',)
+    pagination_class = PaginagePublishers
 
 
 # Том
@@ -253,6 +263,7 @@ class VolumeListAPIView(generics.ListAPIView):
                        OrderingFilter,)
     filterset_fields = ('name',)
     ordering_fields = ('name',)
+    pagination_class = PaginageVolumes
 
 
 # Жанр
@@ -298,6 +309,7 @@ class GenreListAPIView(generics.ListAPIView):
     permission_classes = [permissions.AllowAny]
     filter_backends = (OrderingFilter,)
     ordering_fields = ('name_en', 'name_ru',)
+    pagination_class = PaginageGenres
 
 
 # Выдача книг
@@ -368,6 +380,7 @@ class OrderListAPIView(generics.ListAPIView):
                        'count_extensions',
                        'time_return',
                        )
+    pagination_class = BasePaginate
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -451,6 +464,7 @@ class ExtensionListAPIView(generics.ListAPIView):
                        'time_response',
                        'time_request',
                        )
+    pagination_class = PaginateExtensions
 
     def get_queryset(self):
         queryset = super().get_queryset()
