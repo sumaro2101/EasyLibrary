@@ -20,7 +20,7 @@ class UserProfileViewAPI(generics.RetrieveAPIView):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        if not instance == request.user:
+        if not instance == request.user and not request.user.is_librarian:
             list_of_allow_fields = ('username',
                                     'first_name',
                                     'email',

@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # rest-framework
     'rest_framework',
+    # django-filter
+    'django_filters',
     # redoc
     'drf_yasg',
     # celery

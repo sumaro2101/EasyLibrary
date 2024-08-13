@@ -2,7 +2,9 @@ from datetime import date, timedelta
 
 from rest_framework import generics, status
 from rest_framework import permissions
+from rest_framework.filters import OrderingFilter
 from rest_framework.response import Response
+from django_filters.rest_framework import backends as filters
 
 from django.db.models import Q
 from django.core.exceptions import (MultipleObjectsReturned,
@@ -90,6 +92,28 @@ class BookListAPIView(generics.ListAPIView):
             'genre',
             )
     permission_classes = [permissions.AllowAny]
+    filter_backends = (filters.DjangoFilterBackend,
+                       OrderingFilter,)
+    filterset_fields = ('name',
+                        'publisher',
+                        'best_seller',
+                        'volume',
+                        'age_restriction',
+                        'year_published',
+                        'is_published',
+                        'author',
+                        )
+    ordering_fields = ('name',
+                       'publisher',
+                       'best_seller',
+                       'age_restriction',
+                       'year_published',
+                       'is_published',
+                       'circulation',
+                       'quantity',
+                       'count_pages',
+                       'author',
+                       )
 
 
 # Автор
@@ -133,6 +157,8 @@ class AuthorListAPIView(generics.ListAPIView):
     serializer_class = AuthorSerializer
     queryset = Author.objects.get_queryset()
     permission_classes = [permissions.AllowAny]
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_fields = ('last_name', 'first_name',)
 
 
 # Издатель
@@ -176,6 +202,10 @@ class PublisherListAPIView(generics.ListAPIView):
     serializer_class = PublisherSerializer
     queryset = Publisher.objects.get_queryset()
     permission_classes = [permissions.AllowAny]
+    filter_backends = (filters.DjangoFilterBackend,
+                       OrderingFilter,)
+    filterset_fields = ('name', 'address',)
+    ordering_fields = ('name',)
 
 
 # Том
@@ -219,6 +249,10 @@ class VolumeListAPIView(generics.ListAPIView):
     serializer_class = VolumeSerializer
     queryset = Volume.objects.get_queryset().order_by('name')
     permission_classes = [permissions.AllowAny]
+    filter_backends = (filters.DjangoFilterBackend,
+                       OrderingFilter,)
+    filterset_fields = ('name',)
+    ordering_fields = ('name',)
 
 
 # Жанр
@@ -262,6 +296,8 @@ class GenreListAPIView(generics.ListAPIView):
     serializer_class = GenreSerializer
     queryset = Genre.objects.get_queryset()
     permission_classes = [permissions.AllowAny]
+    filter_backends = (OrderingFilter,)
+    ordering_fields = ('name_en', 'name_ru',)
 
 
 # Выдача книг
@@ -325,7 +361,14 @@ class OrderListAPIView(generics.ListAPIView):
     """
     queryset = Order.objects.get_queryset().prefetch_related('book')
     serializer_class = OrderListViewSerializer
-    
+    filter_backends = (filters.DjangoFilterBackend,
+                       OrderingFilter,)
+    filterset_fields = ('book', 'count_extensions',)
+    ordering_fields = ('book',
+                       'count_extensions',
+                       'time_return',
+                       )
+
     def get_queryset(self):
         queryset = super().get_queryset()
         user = self.request.user
@@ -392,10 +435,22 @@ class ExtensionRetrieveAPIView(generics.RetrieveAPIView):
 
 
 class ExtensionListAPIView(generics.ListAPIView):
+    """Просмотр списка запросов
+    """
     queryset = RequestExtension.objects.get_queryset().prefetch_related(
         'order__book',
     )
     serializer_class = ExtensionListSerializer
+    filter_backends = (filters.DjangoFilterBackend,
+                       OrderingFilter,)
+    filterset_fields = ('order',
+                        'applicant',
+                        'solution',
+                        )
+    ordering_fields = ('solution',
+                       'time_response',
+                       'time_request',
+                       )
 
     def get_queryset(self):
         queryset = super().get_queryset()
