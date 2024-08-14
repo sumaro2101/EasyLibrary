@@ -41,6 +41,15 @@ class UserCreateProfileAPI(generics.CreateAPIView):
     serializer_class = UserProfileCreateSerializer
     permission_classes = [permissions.AllowAny]
 
+    def get_permissions(self):
+        anonymous = self.request.user.is_anonymous
+        if anonymous or not self.request.user.is_librarian:
+            return super().get_permissions()
+        else:
+            self.permission_classes = [permissions.IsAuthenticated &
+                                       IsSuperUser]
+        return super().get_permissions()
+
 
 class UserUpdateProfileAPI(generics.UpdateAPIView):
     """Редактирование пользователя
@@ -49,6 +58,14 @@ class UserUpdateProfileAPI(generics.UpdateAPIView):
     serializer_class = UserProfileUpdateSerializer
     permission_classes = [permissions.IsAuthenticated &
                           (IsCurrentUser | IsSuperUser)]
+
+    def get_permissions(self):
+        if not self.request.user.is_librarian:
+            return super().get_permissions()
+        else:
+            self.permission_classes = [permissions.IsAuthenticated &
+                                       IsSuperUser]
+        return super().get_permissions()
 
 
 class UserDeleteProfuleAPI(generics.DestroyAPIView):
@@ -62,6 +79,15 @@ class UserDeleteProfuleAPI(generics.DestroyAPIView):
         instance.is_active = False
         instance.save(update_fields=('is_active',))
 
+    def get_permissions(self):
+        librarian = self.request.user.is_librarian
+        if not librarian:
+            return super().get_permissions()
+        else:
+            self.permission_classes = [permissions.IsAuthenticated &
+                                       IsSuperUser]
+        return super().get_permissions()
+    
 
 class LibrarianCreateProfileAPI(generics.CreateAPIView):
     """Создание библиотекаря,

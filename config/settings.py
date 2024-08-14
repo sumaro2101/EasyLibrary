@@ -24,12 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-i38dvg2h9#vqsl9*yb#2_m%a-al+ls_jk20o9#n)3hog69(rz1'
+SECRET_KEY = find_env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = find_env('TEST')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [find_env('ALLOWED_HOSTS'), 'localhost']
 
 SWAGGER_SETTINGS = {
     'VALIDATOR_URL': 'http://127.0.0.1:8000'
@@ -195,9 +195,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # CORS
 
-CORS_ALLOWED_ORIGINS = ['http://localhost:8000', 'https://api.telegram.org']
+CORS_ALLOWED_ORIGINS = ['http://localhost:8000']
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8000',]
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000']
 
 CORS_ALLOW_ALL_ORIGINS = False
 
@@ -225,14 +225,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "static"
 
 
 # Media files
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "mediafiles"
+MEDIA_ROOT = BASE_DIR / "media"
 
 
 # Default primary key field type

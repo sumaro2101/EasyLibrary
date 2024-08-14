@@ -245,8 +245,9 @@ class Order(models.Model):
 
     tenant = models.ForeignKey("users.User",
                                verbose_name='пользователь',
-                               on_delete=models.CASCADE,
+                               on_delete=models.SET_NULL,
                                help_text='На кого была выдана книга',
+                               null=True,
                                )
 
     count_extensions = models.SmallIntegerField(verbose_name='продления',
@@ -296,7 +297,7 @@ class RequestExtension(models.Model):
 
     applicant = models.ForeignKey("users.User",
                                   verbose_name='заявщик',
-                                  on_delete=models.CASCADE,
+                                  on_delete=models.SET_NULL,
                                   related_name='extensions',
                                   help_text='Заявщик который хочет продлить',
                                   default=None,

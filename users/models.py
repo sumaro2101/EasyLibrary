@@ -8,6 +8,11 @@ from phonenumber_field.modelfields import PhoneNumberField
 class User(AbstractUser):
     """Модель пользователя
     """
+    email = models.EmailField(unique=True,
+                              verbose_name='эмеил',
+                              help_text='Эмеил пользователя',
+                              )
+
     phone = PhoneNumberField(help_text='Номер телефона,\
         важно указать для связи с клиентом.\
             Пример: +7 (900) 910 1000',
