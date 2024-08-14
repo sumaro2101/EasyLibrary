@@ -6,61 +6,85 @@ services:
       dockerfile: ./docker/django/Dockerfile
     volumes:
       - .:/app
-      - static_volume:/home/app/staticfiles
-      - media_volume:/home/app/mediafiles
+      - ./static:/home/app/static/
+      - ./media:/home/app/media/
     image: config
     command: /start
     expose:
       - 8000
     env_file:
       - .env
+    environment:
+      - DOCKER_DEBUG=0
     depends_on:
       - redis
       - db
+
+  nginx:
+    restart: always
+    image: nginx:latest
+    volumes:
+      - ./static:/var/www/EasyLibrary/static/
+      - ./media:/var/www/EasyLibrary/media/
+      - ./docker/nginx:/etc/nginx/conf.d
+    expose:
+      - 8080
+    ports:
+      - "80:8080"
+    depends_on:
+      - library
   
   db:
-    image: postgres:16.3-alpine3.20
+    restart: always
+    image: postgres:16.3-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_DB=resx
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=password
+    hostname: db
+    env_file:
+      - .env
 
   redis:
-    image: redis:7.2.5-alpine3.20
+    image: redis:7.2.5-alpine
+    expose:
+      - 6379
   
   celery_worker:
+    restart: always
     build: 
       context: .
-      dockerfile: ./compose/django/Dockerfile
+      dockerfile: ./docker/django/Dockerfile
     image: config
     command: /start-celeryworker
     volumes:
       - .:/app
     env_file:
       - .env
+    environment:
+      - DOCKER_DEBUG=0
     depends_on:
       - redis
       - db
-      - resx
+      - library
 
   celery_beat:
+    restart: always
     build: 
       context: .
-      dockerfile: ./compose/django/Dockerfile
+      dockerfile: ./docker/django/Dockerfile
     image: config
     command: /start-celerybeat
     volumes:
       - .:/app
     env_file:
       - .env
+    environment:
+      - DOCKER_DEBUG=0
     depends_on:
       - redis
       - db
-      - resx
+      - library
 
 volumes:
   postgres_data:
-  static_volume:
-  media_volume:
+  static:
+  media:
