@@ -9,37 +9,38 @@ from library.models import (Author,
                             Genre,
                             )
 
-# Register your models here.
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('book',
-                            'tenant',
-                            'count_extensions',
-                            'time_order',
-                            'time_return',
-                            'status',
-                            )
-    
+                    'tenant',
+                    'count_extensions',
+                    'time_order',
+                    'time_return',
+                    'status',
+                    )
+
+
 @admin.register(Author)
 class AuthorAdmin(admin.ModelAdmin):
-    list_display = (
-                  'first_name',
-                  'last_name',
-                  'surname',
-                  'portrait',
-                  )
+    list_display = ('first_name',
+                    'last_name',
+                    'surname',
+                    'portrait',
+                    )
+
 
 @admin.register(RequestExtension)
 class RequestExtensionAdmin(admin.ModelAdmin):
     list_display = ('order',
-                            'applicant',
-                            'time_request',
-                            'receiving',
-                            'time_response',
-                            'solution',
-                            )
-    
+                    'applicant',
+                    'time_request',
+                    'receiving',
+                    'time_response',
+                    'solution',
+                    )
+
+
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
     list_display = (
@@ -57,6 +58,7 @@ class BookAdmin(admin.ModelAdmin):
                   'is_published',
                   )
 
+
 @admin.register(Publisher)
 class PublisherAdmin(admin.ModelAdmin):
     list_display = ('name',
@@ -65,12 +67,13 @@ class PublisherAdmin(admin.ModelAdmin):
                     'email',
                     'phone',
                     )
-    
+
+
 @admin.register(Volume)
 class VolumeAdmin(admin.ModelAdmin):
     list_display = ('name',)
-    
+
+
 @admin.register(Genre)
 class GenreAdmin(admin.ModelAdmin):
     list_display = ('name_en', 'name_ru',)
-        

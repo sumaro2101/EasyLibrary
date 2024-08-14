@@ -11,46 +11,57 @@
 
 
 # How to use
-## Для использования API нужно понимать, что есть 3 типа пользователей:
+## Для использования API нужно понимать, что есть 4 типа пользователей:
 1. Администратор
 2. Библиотекарь
 3. Пользователь
+4. Анонимный пользователь
 
+## Описание:
 1. Администратор может делать все и только он может создавать библиотекаря.
 2. Библиотекарь может взаимодействовать так же со всей системой, но по опеределенным правилами.
-3. Пользователь может только просматривать все таблицы, а так же брать книги если они есть в наличии, а так же
+3. Пользователь может только просматривать все таблицы, а так же брать книги если они есть в наличии и
 создавать заявки на продление выданной книги.
+4. Анонимный пользователь может только просматривать таблицы, не каких других действий он не может совершать.
 
 ## Администратор может:
 1. Самое главное, Администратор может создавать библиотекаря и только он.
 2. Все остальное.
 
 ## Библиотекарь может:
-1. Cоздавать, редактировать, удалять Книги.
-2. Cоздавать, редактировать, удалять Авторов.
-3. Cоздавать, редактировать, удалять Издателей.
-4. Cоздавать, редактировать, удалять Тома.
-5. Cоздавать, редактировать, удалять Жанры.
-6. Открывать, закрывать Выдачу книг.
-7. Открывать, принимать, отказывать заявки на Продление книг.
+1. Cоздавать, просматривать, редактировать, удалять Книги.
+2. Cоздавать, просматривать, редактировать, удалять Авторов.
+3. Cоздавать, просматривать, редактировать, удалять Издателей.
+4. Cоздавать, просматривать, редактировать, удалять Тома.
+5. Cоздавать, просматривать, редактировать, удалять Жанры.
+6. Открывать, просматривать, закрывать Выдачу книг.
+7. Открывать, просматривать, принимать, отказывать заявки на Продление книг.
 
 ## Библиотекарь не может:
 1. Создавать, редактировать, удалять любых пользователей включая себя.
 
 ## Пользователь может:
-1. Открывать Выдачу книг.
-2. Открывать заявку на Продление книг.
-3. Создавать, редактировать, удалять свой профиль.
+1. Открывать, просматривать, Выдачу книг.
+2. Открывать, просматривать, заявку на Продление книг.
+3. Создавать, просматривать, редактировать, удалять свой профиль.
 
 ## Пользователь не может:
 1. Все остальное.
 
+## Анонимный пользователь может:
+1. Просматривать Книги, Авторов, Издателей, Жанры, Тома.
+
+## Анонимный пользователь не может:
+1. Все остальное.
+
+# Rules
 ## Правила создания и обновления Книги:
-1. Если книга опубликована год ее написания не может быть больше ТЕКУЩЕГО.
-2. Если книга не была опубликована год ее написания может быть больше ТЕКУЩЕГО.
-3. Если книга не была опубликована она не может быть ЛИДЕРОМ продаж.
-4. Если книга не была опубликована она не может иметь тираж.
-5. Если у книги есть том - должен быть и номер присущей этой книги в томе.
+1. Если книга опубликована - год ее написания не может быть больше ТЕКУЩЕГО.
+2. Если книга не была опубликована - год ее написания может быть больше ТЕКУЩЕГО.
+3. Если книга не была опубликована - она не может быть ЛИДЕРОМ продаж.
+4. Если книга не была опубликована - она не может иметь ТИРАЖ.
+5. Если у книги есть том - должен быть и номер присущей этой книги в ТОМЕ.
+6. Поля обязательные: author, publisher, name, age_restriction, count_pages, year_published, genre, circulation.
 
 ## Правила создания и обновления Автора:
 1. Поля имя и фамилия обязательны.
@@ -72,11 +83,11 @@
 2. Нельзя выдать книгу, если количество книг в библиотеке уже 0.
 
 ## Правила открытия заявления на продление выдачи книги:
-1. Нельзя запросить продление если заявление уже было подано и
+1. Нельзя запросить продление, если заявление уже было подано и
 оно до сих пор в статусе "wait" (то есть еще не было обработано библиотекарем).
 2. Пользователь может открывать заявление только на свои книги которые были ему выданы.
 3. Можно открывать заявления только на активную выдачу книги (то есть на ту которая еще не была возвращена).
-4. Нельзя открывать заявление если количество продлений уже 2 (можно продлевать только 2 раза).
+4. Нельзя открывать заявление, если количество продлений уже 2 (можно продлевать только 2 раза).
 
 ## Правила обработки заявления на продления выдачи книги:
 1. Одно заявление можно обработать только один раз, если статус заявление не 'wait' больше отвечать нельзя.
@@ -99,52 +110,52 @@
 # API URLS
 
 ## Книга
-1. http://localhost/api/book/list/ - просмотр списка книг.
-2. http://localhost/api/book/retrieve/"some_book_number"/ - просмотр книги.
-3. http://localhost/api/book/create/ - создание книги.
-4. http://localhost/api/book/update/"some_book_number"/ - обновление книги.
-5. http://localhost/api/book/delete/"some_book_number"/ - удаление книги.
+1. http://localhost/api/book/list/ GET - просмотр списка книг.
+2. http://localhost/api/book/retrieve/"some_book_number"/ GET - просмотр книги.
+3. http://localhost/api/book/create/ POST - создание книги.
+4. http://localhost/api/book/update/"some_book_number"/ PATCH - обновление книги.
+5. http://localhost/api/book/delete/"some_book_number"/ DELETE - удаление книги.
 
 ## Автор
-1. http://localhost/api/author/list/ - просмотр списка авторов.
-2. http://localhost/api/author/retrieve/"some_author_number"/ - просмотр автора.
-3. http://localhost/api/author/create/ - создание автора.
-4. http://localhost/api/author/update/"some_author_number"/ - обновление автора.
-5. http://localhost/api/author/delete/"some_author_number"/ - удаление автора.
+1. http://localhost/api/author/list/ GET - просмотр списка авторов.
+2. http://localhost/api/author/retrieve/"some_author_number"/ GET - просмотр автора.
+3. http://localhost/api/author/create/ CREATE - создание автора.
+4. http://localhost/api/author/update/"some_author_number"/ PATCH - обновление автора.
+5. http://localhost/api/author/delete/"some_author_number"/ DELETE - удаление автора.
 
 ## Издатель
-1. http://localhost/api/publisher/list/ - просмотр списка издателей.
-2. http://localhost/api/publisher/retrieve/"some_publisher_number"/ - просмотр автора.
-3. http://localhost/api/publisher/create/ - создание издателя.
-4. http://localhost/api/publisher/update/"some_publisher_number"/ - обновление автора.
-5. http://localhost/api/publisher/delete/"some_publisher_number"/ - удаление автора.
+1. http://localhost/api/publisher/list/ GET - просмотр списка издателей.
+2. http://localhost/api/publisher/retrieve/"some_publisher_number"/ GET - просмотр автора.
+3. http://localhost/api/publisher/create/ CREATE - создание издателя.
+4. http://localhost/api/publisher/update/"some_publisher_number"/ PATCH - обновление автора.
+5. http://localhost/api/publisher/delete/"some_publisher_number"/ DELETE - удаление автора.
 
 ## Том
-1. http://localhost/api/volume/list/ - просмотр списка томов.
-2. http://localhost/api/volume/retrieve/"some_volume_number"/ - просмотр тома.
-3. http://localhost/api/volume/create/ - создание тома.
-4. http://localhost/api/volume/update/"some_volume_number"/ - обновление тома.
-5. http://localhost/api/volume/delete/"some_volume_number"/ - удаление тома.
+1. http://localhost/api/volume/list/ GET - просмотр списка томов.
+2. http://localhost/api/volume/retrieve/"some_volume_number"/ GET - просмотр тома.
+3. http://localhost/api/volume/create/ CREATE - создание тома.
+4. http://localhost/api/volume/update/"some_volume_number"/ PATCH - обновление тома.
+5. http://localhost/api/volume/delete/"some_volume_number"/ DELETE - удаление тома.
 
 ## Жанр
-1. http://localhost/api/genre/list/ - просмотр списка жанров.
-2. http://localhost/api/genre/retrieve/"some_genre_number"/ - просмотр жанра.
-3. http://localhost/api/genre/create/ - создание жанра.
-4. http://localhost/api/genre/update/"some_genre_number"/ - обновление жанра.
-5. http://localhost/api/genre/delete/"some_genre_number"/ - удаление жанра.
+1. http://localhost/api/genre/list/ GET - просмотр списка жанров.
+2. http://localhost/api/genre/retrieve/"some_genre_number"/ GET - просмотр жанра.
+3. http://localhost/api/genre/create/ CREATE - создание жанра.
+4. http://localhost/api/genre/update/"some_genre_number"/ PATCH - обновление жанра.
+5. http://localhost/api/genre/delete/"some_genre_number"/ DELETE - удаление жанра.
 
 ## Выдача книг
-1. http://localhost/api/order/open/"some_book_number"/ - открытие выдачи книги.
-2. http://localhost/api/order/close/"some_order_number"/ - закрытие выдачи книги.
-3. http://localhost/api/order/retrieve/"some_order_number"/ - просмотр выдачи.
-4. http://localhost/api/order/list/ - просмотр списка выдач.
+1. http://localhost/api/order/open/"some_book_number"/ CREATE - открытие выдачи книги.
+2. http://localhost/api/order/close/"some_order_number"/ DELETE - закрытие выдачи книги.
+3. http://localhost/api/order/retrieve/"some_order_number"/ GET - просмотр выдачи.
+4. http://localhost/api/order/list/ GET - просмотр списка выдач.
 
 ## Запрос на продление выдачи
-1. http://localhost/api/extension/open/"some_order_number"/ - открытие заявление на продление.
-2. http://localhost/api/extension/accept/"some_extension_number"/ - принятие продления.
-3. http://localhost/api/extension/cancel/"some_extension_number"/ - отказ от продления.
-4. http://localhost/api/extension/retrieve/"some_extension_number"/ - просмотр заявления.
-5. http://localhost/api/extension/list/ - просмотра списка заявлений.
+1. http://localhost/api/extension/open/"some_order_number"/ CREATE - открытие заявление на продление.
+2. http://localhost/api/extension/accept/"some_extension_number"/ PATCH - принятие продления.
+3. http://localhost/api/extension/cancel/"some_extension_number"/ PATCH - отказ от продления.
+4. http://localhost/api/extension/retrieve/"some_extension_number"/ GET - просмотр заявления.
+5. http://localhost/api/extension/list/ GET - просмотра списка заявлений.
 
 
 # Info
@@ -160,7 +171,7 @@
 # Future Plans
 
 В дальнейшей работе есть цель улучшить оптимизацию, я пока не смог отследить одну проблему
-связанную с тем что иногда к запросам +5 секунд добавляеся (я могу грешить на свой сетевой терминал),
+связанную с тем что иногда к запросам добавляеся +5 секунд (я могу грешить на свой сетевой терминал),
 работаю я на MacBook PRO M3 MAX на 64гиг оперативки.
 
 Улучшения связанные с программой могут быть:

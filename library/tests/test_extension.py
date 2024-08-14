@@ -29,10 +29,11 @@ class TestExtension(APITestCase):
             is_librarian=True,
             is_staff=True,
         )
-        self.author = Author.objects.create(first_name='author',
-                                       last_name='author_last',
-                                       surname='surname',
-                                       )
+        self.author = Author.objects.create(
+            first_name='author',
+            last_name='author_last',
+            surname='surname',
+            )
         self.publisher = Publisher.objects.create(
             name='publisher',
             address='new-york',

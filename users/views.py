@@ -87,7 +87,7 @@ class UserDeleteProfuleAPI(generics.DestroyAPIView):
             self.permission_classes = [permissions.IsAuthenticated &
                                        IsSuperUser]
         return super().get_permissions()
-    
+
 
 class LibrarianCreateProfileAPI(generics.CreateAPIView):
     """Создание библиотекаря,

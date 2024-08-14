@@ -142,28 +142,32 @@ except TypeError:
 
 if DOCKER_DEBUG:
     DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME' : BASE_DIR / 'db.sqlite3'
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3'
         }
     }
 else:
     DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': find_env('DB_NAME'),
-        'HOST': 'db',
-        'PORT': find_env('DB_PORT'),
-        'USER': find_env('DB_USER'),
-        'PASSWORD': find_env('DB_PASSWORD')
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': find_env('DB_NAME'),
+            'HOST': 'db',
+            'PORT': find_env('DB_PORT'),
+            'USER': find_env('DB_USER'),
+            'PASSWORD': find_env('DB_PASSWORD')
         }
     }
 
 
 # CELERY
 
-CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://127.0.0.1:6379/0")
-CELERY_RESULT_BACKEND = os.environ.get("CELERY_BACKEND", "redis://127.0.0.1:6379/0")
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER",
+                                   "redis://127.0.0.1:6379/0",
+                                   )
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_BACKEND",
+                                       "redis://127.0.0.1:6379/0",
+                                       )
 CELERY_RESULT_EXTENDED = True
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_BEAT_SCHEDULER = find_env('DEFAULT_DATABASE_BEAT')

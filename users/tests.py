@@ -36,7 +36,6 @@ class TestUserApi(APITestCase):
                                          'groups': [],
                                          'orders': [],
                                          'count_orders': 0,
-                                         
                                          })
 
     def test_create_user(self):
