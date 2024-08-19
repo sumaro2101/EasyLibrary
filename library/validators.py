@@ -69,7 +69,7 @@ class YearValidator:
         """
         match published:
             case True:
-                if not 1456 < year < date.today().year:
+                if not 1456 < year <= date.today().year:
                     raise ValidationError({'year': 'Значение год не '
                                            'может быть меньше "1456" '
                                            'или больше текущего года'})
