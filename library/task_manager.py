@@ -3,7 +3,6 @@ from datetime import datetime, date
 
 from typing import Union
 
-
 from django_celery_beat.models import IntervalSchedule, PeriodicTask
 
 from django.db.models import Q
